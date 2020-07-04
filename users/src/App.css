@@ -1,0 +1,45 @@
+/* Utils */
+.flex-1 {
+  flex: 1 !important
+}
+
+.flex-2 {
+  flex: 2 !important
+}
+
+.full-height {
+  height: 100% !important;
+}
+
+.bold {
+  font-weight: bold !important;
+}
+
+/* Portal */
+.header {
+  flex: 1
+}
+
+.forms-wrapper {
+  flex: 1
+}
+
+/* Forms with inputs */
+.form-field-group {
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.form-field-wrapper {
+  width: 100%;
+}
+
+.form-field {
+  background: none !important;
+}
+
+/* Logo */
+.portal-logo {
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}

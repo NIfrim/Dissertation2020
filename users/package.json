@@ -1,0 +1,62 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "@dicebear/avatars": "^4.2.1",
+    "@dicebear/avatars-human-sprites": "^4.2.1",
+    "@material-ui/core": "^4.9.5",
+    "@material-ui/lab": "^4.0.0-alpha.56",
+    "apollo-boost": "^0.4.7",
+    "apollo-link-context": "^1.0.19",
+    "apollo-upload-client": "^12.1.0",
+    "axios": "^0.19.2",
+    "clsx": "^1.1.0",
+    "dotenv": "^8.2.0",
+    "formik": "^2.1.4",
+    "graphql": "^14.6.0",
+    "moment": "^2.24.0",
+    "prop-types": "^15.7.2",
+    "qrcode.react": "^1.0.0",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-moment": "^0.9.7",
+    "react-redux": "^7.2.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.4.0",
+    "react-swipeable-views": "^0.13.9",
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0",
+    "ua-parser-js": "^0.7.21",
+    "uuid": "^7.0.2",
+    "yup": "^0.29.1"
+  },
+  "scripts": {
+    "dev": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5"
+  },
+  "author": "Nicolae Ifrim",
+  "license": "MIT"
+}
