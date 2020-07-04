@@ -1,0 +1,57 @@
+.noContent {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Forms with inputs */
+.form-field-group {
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.form-field-wrapper {
+  width: 100%;
+}
+
+.form-field {
+  background: none !important;
+}
+
+.row {
+  display: flex;
+  width: 100%;
+  min-width: fit-content;
+  flex-direction: row;
+  padding: 10px;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.formRow {
+  margin-bottom: 16px !important;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.cardDataRow {
+  margin: 10px;
+  padding: 10px;
+}
+
+.dropzonePreview {
+  width: 100%;
+  margin: 0;
+}
+
+/* .MuiToolbar-root {
+  justify-content: space-between
+}
+
+.MuiToolbar-root .MuiTextField-root {
+  order: 2;
+} */
