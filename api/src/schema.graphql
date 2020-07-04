@@ -1,0 +1,1122 @@
+directive @hasScope(scopes: Scope) on FIELD_DEFINITION
+directive @isAuthenticated on OBJECT | FIELD_DEFINITION
+
+scalar JSON
+scalar Upload
+scalar JSONObject
+
+# Enumerators
+enum Role {
+  STORE_SUPER
+  CUSTOM
+  COMPANY_SUPER
+  ADMIN
+  SECRETARY
+  USER
+}
+
+enum Scope {
+  MANAGE_ACCESS_GROUPS
+  MANAGE_STORE_ACCESS_GROUPS
+  MANAGE_STORES
+  VIEW_STORES
+  MANAGE_PRODUCTS
+  VIEW_PRODUCTS
+  MANAGE_PROMOTIONS
+  VIEW_PROMOTIONS
+  MANAGE_COMPANY_DETAILS
+  VIEW_COMPANY_DETAILS
+  MANAGE_STORE_DETAILS
+  VIEW_STORE_DETAILS
+}
+
+enum AccountType {
+  STORE_ACCOUNT
+  COMPANY_ACCOUNT
+}
+
+enum Rule {
+  BUNDLE
+  DISCOUNT
+  BOGOFF
+}
+
+# Type Defs
+type File {
+  filename: String!
+  mimetype: String!
+  encoding: String!
+}
+
+type Company {
+  _id: ID!
+  crn: String!
+  name: String!
+  email: String!
+  mainNumber: String!
+  accounts: [CompanyAccount!]!
+    @relation(name: "COMPANY_ACCOUNT", direction: "OUT")
+  stores: [Store!] @relation(name: "OWNS_STORE", direction: "OUT")
+}
+
+type Store {
+  _id: ID!
+  disabled: Boolean!
+  # Name of Store should be as descriptive as possible
+  name: String!
+  productGroups: [ProductGroup!]
+    @relation(name: "PRODUCT_GROUP", direction: "OUT")
+  promotionGroups: [PromotionGroup!]
+    @relation(name: "STORE_PROMOTIONS", direction: "OUT")
+  products: [Product!] @relation(name: "STORE_PRODUCT", direction: "OUT")
+  programs: [Program!] @relation(name: "STORE_PROGRAM", direction: "OUT")
+  company: Company! @relation(name: "OWNS_STORE", direction: "IN")
+  location: Location! @relation(name: "IS_AT", direction: "OUT")
+  nearby: Location! @relation(name: "NEAR", direction: "OUT")
+  accounts: [CompanyAccount!]!
+    @relation(name: "STORE_ACCOUNT", direction: "OUT")
+}
+
+type Program {
+  _id: ID!
+  store: Store! @relation(name: "STORE_PROGRAM", direction: "IN")
+  name: String
+  startDate: String!
+  endDate: String!
+  monday: String!
+  tuesday: String!
+  wednesday: String!
+  thursday: String!
+  friday: String!
+  saturday: String!
+  sunday: String!
+}
+
+type User {
+  _id: ID!
+  avatar: String!,
+  firstName: String!
+  lastName: String!
+  email: String!
+  mobile: String
+  password: String!
+  account: UserAccount! @relation(name: "ACCOUNT_DETAILS", direction: "OUT")
+  device: Device! @relation(name: "OWNER", direction: "IN")
+  viewedPromotions: [Promotion!]
+    @relation(name: "VIEWED_PROMOTION", direction: "OUT")
+  usedPromotions: [Promotion!]
+    @relation(name: "USED_PROMOTION", direction: "OUT")
+}
+
+type UserAccount @isAuthenticated {
+  _id: ID!
+  user: User! @relation(name: "ACCOUNT_DETAILS", direction: "IN")
+  backupEmail: String
+  # Application mode (privacy, full)
+  # In privacy mode location is not shared and tailored offers are not generated
+  # In full mode locaiton is shared and tailored offers are generated
+  appMode: String!
+  shareLocation: Boolean!
+  # Require mobile number
+  smsNotifications: Boolean!
+  emailNotifications: Boolean!
+  # Two factor authentication required mobile number
+  #  Works by generating a code and sending it to the user via mobile
+  twoFactorAuth: Boolean!
+  theme: String!
+  fontScale: Float!
+  accountDisabled: Boolean!
+}
+
+type CompanyAccount @isAuthenticated {
+  _id: ID!
+  disabled: Boolean!
+  username: String!
+  groupName: String!
+  password: String!
+  type: AccountType!
+  role: Role!
+  scopes: [Scope!]!
+  company: Company @relation(name: "COMPANY_ACCOUNT", direction: "IN")
+  store: Store @relation(name: "STORE_ACCOUNT", direction: "IN")
+}
+
+type Device @isAuthenticated {
+  _id: ID!
+  platform: String!
+  location: Location! @relation(name: "DEVICE_AT", direction: "OUT")
+  loggedIn: Boolean!
+  user: User! @relation(name: "OWNER", direction: "OUT")
+  websites: [Website!] @relation(name: "VISITED", direction: "OUT")
+}
+
+type Location {
+  _id: ID!
+  stores: [Store!]! @relation(name: "STORE_AT", direction: "IN")
+  devices: [Device!] @relation(name: "DEVICE_AT", direction: "IN")
+  # Keywords are generated from the name of the location
+  keywords: [Keyword!]! @relation(name: "KEYWORD", direction: "IN")
+  # devicesNearby: [Device!] @relation(name: "NEAR", direction: IN)
+  city: String
+  street: String
+  number: String
+  postcode: String
+  country: String
+  latitude: Float
+  longitude: Float
+}
+
+type Website @isAuthenticated {
+  _id: ID!
+  # Unique and used as identifier
+  url: String!
+  title: String!
+  metaData: String
+  pages: [WebPage!] @relation(name: "WEBPAGE", direction: "OUT")
+  devices: [Device!] @relation(name: "VISITED", direction: "IN")
+}
+
+type WebPage @isAuthenticated {
+  _id: ID!
+  url: String!
+  title: String!
+  metaData: String
+  users: [User!] @relation(name: "VISITED", direction: "IN")
+  website: Website! @relation(name: "WEBPAGE", direction: "IN")
+}
+
+type ProductGroup {
+  _id: ID!
+  name: String!
+  description: String
+  disabled: Boolean!
+  linkedPromotionGroups: [PromotionGroup!]
+    @relation(name: "LINKED", direction: "IN")
+  products: [Product!] @relation(name: "GROUP_PRODUCT", direction: "OUT")
+  store: Store! @relation(name: "PRODUCT_GROUP", direction: "IN")
+}
+
+type PromotionGroup @isAuthenticated {
+  _id: ID!
+  name: String!
+  description: String!
+  category: String!
+  disabled: Boolean!
+  linkedProductGroups: [ProductGroup!]
+    @relation(name: "LINKED", direction: "OUT")
+  promotions: [Promotion!]
+    @relation(name: "GENERATED_PROMOTION", direction: "OUT")
+  rules: [Rule!]
+  maxDiscount: Float
+  priceInflation: Float
+  maxProducts: Int
+  expiryDate: String
+}
+
+# Cannot add products without having a group created first
+type Product @isAuthenticated {
+  _id: ID!
+  name: String!
+  brand: String!
+  categories: [String!]
+  shortDescription: String!
+  longDescription: String
+  keywords: [Keyword!]! @relation(name: "KEYWORD", direction: "IN")
+  price: Float!
+  stock: Int!
+  inPromotions: [Promotion!] @relation(name: "IN_PROMOTION", direction: "OUT")
+  inGroup: [ProductGroup!]!
+  store: Store! @relation(name: "STORE_PRODUCT", direction: "IN")
+}
+
+type Keyword {
+  _id: ID!
+  name: String!
+  products: [Product!]! @relation(name: "KEYWORD", direction: "OUT")
+  locations: [Location!]! @relation(name: "KEYWORD", direction: "OUT")
+}
+
+type Promotion @isAuthenticated {
+  _id: ID!
+  type: String!
+  # Value of the saving in percentage, optional as only applies to DISCOUNT and BUNDLE promotions
+  discount: Int
+  # Value of how much the price of the item is inflated, applicable only to BOGOFF promotions
+  priceInflation: Float
+  expires: String!
+  products: [Product!]! @relation(name: "IN_PROMOTION", direction: "IN")
+  promotionGroup: PromotionGroup!
+    @relation(name: "GENERATED_PROMOTION", direction: "IN")
+  usedBy: [User!] @relation(name: "USED_PROMOTION", direction: "IN")
+  viewedBy: [User!] @relation(name: "VIEWED_PROMOTION", direction: "IN")
+}
+
+type CompanyToAccount @isAuthenticated {
+  company: Company!
+  account: CompanyAccount!
+}
+
+# Input types
+input companyInput {
+  name: String!
+  crn: String!
+  email: String!
+  mainNumber: String!
+}
+
+input storeInput {
+  _id: ID
+  disabled: Boolean!
+  name: String!
+}
+
+input productInput {
+  name: String!
+  categories: [String!]
+  shortDescription: String!
+  longDescription: String
+  brand: String!
+  price: Float!
+  stock: Int!
+}
+
+input productGroupInput {
+  name: String!
+  description: String!
+  disabled: Boolean!
+}
+
+input promotionGroupInput {
+  name: String!
+  category: String!
+  description: String!
+  disabled: Boolean!
+  rules: [Rule!]
+  maxDiscount: Float
+  priceInflation: Float
+  maxProducts: Int
+  expiryDate: String
+}
+
+input programInput {
+  # Name would be used as the descriptor (e.g. Christmas)
+  name: String!
+  startDate: String!
+  endDate: String!
+  monday: String!
+  tuesday: String!
+  wednesday: String!
+  thursday: String!
+  friday: String!
+  saturday: String!
+  sunday: String!
+}
+
+input locationInput {
+  _id: ID
+  # devicesNearby: [Device!] @relation(name: "NEAR", direction: IN)
+  city: String!
+  street: String!
+  postcode: String!
+  number: String!
+  country: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+input companyAccountInput {
+  # username is generated and used as unique identifier
+  disabled: Boolean!
+  username: String
+  groupName: String!
+  password: String
+  type: AccountType
+  role: Role
+  scopes: [Scope!]
+}
+
+input loginInput {
+  companyId: Int!
+  username: String!
+  password: String!
+}
+
+input promotionInput {
+  type: String!
+  # Value of the saving in percentage, applicable to DISCOUNT and BUNDLE promotions
+  discount: Int
+  # Value of the price inflation, applicable to BOGOFF promotions
+  priceInflation: Float
+  expires: String!
+}
+
+input userInput {
+  avatar: String
+  firstName: String!
+  lastName: String!
+  email: String!
+  mobile: String
+  password: String
+}
+
+input deviceInput {
+  platform: String!
+  loggedIn: Boolean!
+}
+
+input userLoginInput {
+  email: String!
+  password: String!
+}
+
+input userAccountInput {
+  backupEmail: String
+  # Application mode (privacy, full)
+  # In privacy mode location is not shared and tailored offers are not generated
+  # In full mode locaiton is shared and tailored offers are generated
+  appMode: String!
+  shareLocation: Boolean!
+  # Require mobile number
+  smsNotifications: Boolean!
+  emailNotifications: Boolean!
+  # Two factor authentication required mobile number
+  #  Works by generating a code and sending it to the user via mobile
+  twoFactorAuth: Boolean!
+  theme: String!
+  fontScale: Float!
+  accountDisabled: Boolean!
+}
+
+# Subscriptions
+type Subscription {
+  newPromotionGroup: PromotionGroup!
+}
+
+# Custom Queries
+type Query {
+  LoginAccount(input: loginInput): String
+  LoadAccount(accountId: Int): CompanyAccount
+    @isAuthenticated
+    @cypher(
+      statement: """
+      MATCH (ca:CompanyAccount)
+        WHERE ID(ca) = $accountId
+        MATCH (c:Company)-[:COMPANY_ACCOUNT]->(ca)
+        OPTIONAL MATCH (s:Store)-[:STORE_ACCOUNT]->(ca)
+        RETURN ca AS companyaccount
+      """
+    )
+
+
+
+  # PRODUCTS QUERIES
+  # Cypher for getting all product groups
+  GetProductGroups(storeId: Int): [ProductGroup!]
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_PRODUCTS", "VIEW_PRODUCTS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-->(pg:ProductGroup)
+      WHERE ID(s) = $storeId
+      RETURN pg AS productgroup
+      """
+    )
+
+  # LoginStore(input: loginInput): Store
+  #   @cypher(
+  #     statement: """
+  #     MATCH (s:Store{name: $input.store})
+  #     MATCH (ca:CompanyAccount{username: $input.username})
+  #     MATCH (s)-[:STORE_ACCOUNT]->(ca)
+  #     RETURN c AS Store
+  #     """
+  #   )
+
+  # Cypher for getting all the promotion groups in a category
+  GetPromotionGroups(storeId: ID, category: String!): [PromotionGroup!]
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_PROMOTIONS", "VIEW_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-->(pg:PromotionGroup)
+      WHERE ID(s) = $storeId AND pg.category = $category
+      RETURN pg AS promotiongroup
+      """
+    )
+
+  # Cypher to login user
+  LoginUser(input: userLoginInput!): String
+
+  # Cypher to load user account
+  LoadUser(email: String): User
+  @isAuthenticated
+  @cypher(
+    statement: """
+    MATCH (u:User{email: $email})
+    RETURN u AS user
+    """
+  )
+
+# Cypher to test connection to database
+  TestConnection: String!
+  @cypher(
+    statement: """
+    RETURN 'Connected to Apollo Server'
+    """
+  )
+}
+
+
+
+
+# Mutations
+type Mutation {
+  CreateCompanyAccount(
+    companyId: Int
+    input: companyAccountInput!
+  ): CompanyAccount
+    @isAuthenticated
+    @cypher(
+      statement: """
+      MATCH (c:Company)
+      WHERE ID(c) = $companyId
+      MERGE (c)-[:COMPANY_ACCOUNT]->(ca:CompanyAccount{
+        disabled: $input.disabled,
+        username: $input.username,
+        groupName: $input.groupName,
+        type: $input.type,
+        role: $input.role,
+        password: $input.password,
+        scopes: $input.scopes
+      })
+      RETURN ca AS companyaccount
+      """
+    )
+
+  CreateStoreAccount(
+    companyId: Int
+    storeId: Int!
+    input: companyAccountInput!
+  ): CompanyAccount
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_STORE_ACCESS_GROUPS"])
+    @cypher(
+      statement: """
+      MATCH (c:Company)-[:OWNS_STORE]->(s:Store)
+      WHERE ID(c) = $companyId AND ID(s) = $storeId
+      MERGE (sa:CompanyAccount{
+        disabled: $input.disabled,
+        username: $input.username,
+        groupName: $input.groupName,
+        type: $input.type,
+        role: $input.role,
+        password: $input.password,
+        scopes: $input.scopes
+      })
+      MERGE (s)-[:STORE_ACCOUNT]->(sa)<-[:COMPANY_ACCOUNT]-(c)
+      RETURN sa AS companyaccount
+      """
+    )
+
+  UpdateCompanyAccount(
+    accountId: Int!
+    input: companyAccountInput!
+  ): CompanyAccount
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_ACCESS_GROUPS"])
+    @cypher(
+      statement: """
+      MATCH (ca:CompanyAccount)
+      WHERE ID(ca) = $accountId
+      SET ca += CASE
+                WHEN $input.username = ca.username THEN {
+                  disabled: $input.disabled, groupName: $input.groupName, type: $input.type, role: $input.role, scopes: $input.scopes
+                } WHEN NOT $input.username = ca.username THEN {
+                  username: $input.username, disabled: $input.disabled, groupName: $input.groupName, type: $input.type, role: $input.role, scopes: $input.scopes
+                } 
+                ELSE {} END
+
+      SET ca += CASE $input.password
+                WHEN NULL THEN {} 
+                ELSE {
+                  password: $input.password
+                }
+                END
+
+      RETURN ca AS companyaccount
+      """
+    )
+
+  CreateCompany(input: companyInput!): Company
+    @cypher(
+      statement: """
+      MERGE (c:Company{name: $name, crn: $crn, email: $email, mainNumber: $mainNumber})
+      MERGE (a:CompanyAccount{username: $username, groupName: $groupName, type: $type, role: $role, password: $password, scopes: $scopes})
+      MERGE (c)-[:COMPANY_ACCOUNT]->(a)
+      RETURN c AS company
+      """
+    )
+
+  # Remove the company with all related nodes
+  RemoveCompany(companyId: Int!): Company
+    @hasScope(scopes: ["MANAGE_COMPANY_DETAILS"])
+    @isAuthenticated
+    @cypher(
+      statement: """
+      MATCH (c:Company)
+      WHERE ID(c) = $companyId
+      MATCH nodes = (c)-[*]->()
+      DETACH DELETE nodes
+      """
+    )
+
+  # Remove accounts by array of ID
+  RemoveCompanyAccounts(accountIds: [Int!]!): [CompanyAccount!]
+    @hasScope(scopes: ["MANAGE_ACCESS_GROUPS", "MANAGE_STORE_ACCESS_GROUPS"])
+    @isAuthenticated
+    @cypher(
+      statement: """
+      MATCH (ca:CompanyAccount)
+      WHERE ID(ca) IN $accountIds
+      WITH ca, ca AS companyAccounts
+      DETACH DELETE ca
+      RETURN companyAccounts
+      """
+    )
+
+  # Cypher to update the company by id
+  UpdateCompany(companyId: Int!, input: companyInput!): Company
+    @hasScope(scopes: ["MANAGE_COMPANY_DETAILS"])
+    @cypher(
+      statement: """
+      MATCH (c:Company)
+      WHERE ID(c) = $companyId
+      SET c = $input
+      RETURN c AS company
+      """
+    )
+
+  # This mutation uses the inputs, along with some generated fields
+  #  to create a store along with related account and location
+  CreateStore(
+    store: storeInput!
+    account: companyAccountInput!
+    location: locationInput!
+  ): Store
+    @hasScope(scopes: ["MANAGE_STORES"])
+    @cypher(
+      statement: """
+      MATCH (c:Company)
+      WHERE ID(c) = $companyId
+      CREATE (s:Store{name: $store.name, disabled: $store.disabled})
+      MERGE (ca:CompanyAccount{disabled: $account.disabled, username: $account.username, groupName: $account.groupName, type: $account.type, role: $account.role, password: $account.password, scopes: $account.scopes})
+      MERGE (l:Location{number: $location.number, city: $location.city, street: $location.street, postcode: $location.postcode, country: $location.country, latitude: $location.latitude, longitude: $location.longitude})
+      FOREACH (keyword IN $location.keywords | MERGE (k:Keyword{name: keyword}) MERGE (k)-[:KEYWORD]->(l))
+      MERGE (c)-[:OWNS_STORE]->(s)-[:STORE_ACCOUNT]->(ca)<-[:COMPANY_ACCOUNT]-(c)
+      MERGE (s)-[:IS_AT]->(l)
+      RETURN s AS store
+      """
+    )
+
+  # Cypher to update store by id
+  UpdateStore(
+    storeId: Int!
+    store: storeInput!
+    location: locationInput
+  ): Store
+    @hasScope(scopes: ["MANAGE_STORES"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-[:IS_AT]->(l:Location)
+      WHERE ID(s) = $storeId
+      SET s = $store
+      SET l = $location
+      RETURN s AS store
+      """
+    )
+
+  # Cypher used to remove store with all related nodes
+  RemoveStores(storeIds: [Int!]!): [Store!]
+    @hasScope(scopes: ["MANAGE_STORES"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)
+      WHERE ID(s) IN $storeIds
+      MATCH nodes = (s)-[*]->()
+      WITH nodes, s AS store
+      DETACH DELETE nodes
+      RETURN DISTINCT store
+      """
+    )
+
+  # # Cypher for creating a program node and adding the relevant relationship
+  # CreateProgram(storeId: Int!, input: programInput!): Program
+  #   @hasScope(scopes: ["MANAGE_STORES"])
+  #   @cypher(
+  #     statement: """
+  #     MATCH (s:Store)
+  #     WHERE ID(s) = $storeId
+  #     MERGE (p:Program{name: $name, startDate: $startDate, endDate: $endDate, monday: $monday, tuesday: $tuesday, wednesday: $wednesday, thursday: $thursday, friday: $friday, saturday: $saturday, sunday: $sunday})
+  #     MERGE (s)-[:STORE_PROGRAM]->(p)
+  #     RETURN p AS program
+  #     """
+  #   )
+
+  # # Cypher for removing Program linked to Store
+  # RemovePrograms(programIds: [Int!]!): Program
+  #   @hasScope(scopes: ["MANAGE_STORES"])
+  #   @cypher(
+  #     statement: """
+  #     MATCH (p:Program)
+  #     WHERE ID(p) IN $programIds
+  #     DETACH DELETE p
+  #     """
+  #   )
+
+  # # Cypher for updating a Program with new values
+  # UpdateProgram(storeId: Int!, input: programInput!): Program
+  #   @hasScope(scopes: ["MANAGE_STORES"])
+  #   @cypher(
+  #     statement: """
+  #     MATCH (s:Store)-[:STORE_PROGRAM]->(p:Program{name: $name})
+  #     WHERE ID(s) = $storeId
+  #     SET p = $input
+  #     RETURN p AS program
+  #     """
+  #   )
+
+  # PRODUCTS CYPHERS
+
+  # Cypher for creating a product group
+  CreateProductGroup(
+    storeId: Int!
+    # Categories(Keywords) are added to the input by the resolver
+    productGroup: productGroupInput!
+    files: [Upload!]
+    products: [productInput!]
+  ): ProductGroup
+    @hasScope(scopes: ["MANAGE_PRODUCTS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)
+      WHERE ID(s) = $storeId
+      MERGE (s)-[:PRODUCT_GROUP]->(pg:ProductGroup{name: $productGroup.name, disabled: $productGroup.disabled, description: $productGroup.description})
+      FOREACH (product IN $products |
+        MERGE (k:Keyword{name: product.brand})
+        MERGE (pg)-[:GROUP_PRODUCT]->(p:Product{name: product.name, brand: product.brand, price: product.price, stock: product.stock, shortDescription: product.shortDescription, longDescription: product.longDescription})<-[:KEYWORD]-(k)
+        FOREACH (category IN product.categories | MERGE (k:Keyword{name: category}) MERGE (p)<-[:KEYWORD]-(k))
+      )
+      RETURN pg AS productgroup
+      """
+    )
+
+  # Cypher for updating a product group.
+  # Can also add products to the group from the same form
+  UpdateProductGroup(
+    storeId: Int!
+    groupId: Int!
+    productGroup: productGroupInput!
+    files: [Upload!]
+    products: [productInput!]
+  ): ProductGroup
+    @hasScope(scopes: ["MANAGE_PRODUCTS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store), (pg:ProductGroup)
+      WHERE ID(s) = $storeId AND ID(pg) = $groupId
+      SET pg = $productGroup
+      FOREACH (product IN $products |
+        MERGE (pg)-[:GROUP_PRODUCT]->(p:Product{name: product.name, brand: product.brand, price: product.price, stock: product.stock, shortDescription: product.shortDescription, longDescription: product.longDescription})
+        FOREACH (category IN product.categories | MERGE (k:Keyword{name: category}) MERGE (p)<-[:KEYWORD]-(k))
+      )
+      RETURN pg AS productgroup
+      """
+    )
+
+  # Cypher for updating a product details.
+  UpdateProduct(
+    storeId: Int
+    productId: Int!
+    productInput: productInput!
+  ): Product!
+    @hasScope(scopes: ["MANAGE_PRODUCTS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-[*..2]-(p:Product)
+      WHERE ID(s) = $storeId AND ID(p) = $productId
+      SET p += $productInput
+      RETURN p AS product
+      """
+    )
+
+  # Cypher for removing product groups along with related products
+  RemoveProductGroups(storeId: Int!, groupIds: [Int!]!): [ProductGroup!]
+    @hasScope(scopes: ["MANAGE_PRODUCTS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-[:PRODUCT_GROUP]->(pg:ProductGroup)
+      WHERE ID(s) = $storeId AND ID(pg) IN $groupIds
+      OPTIONAL MATCH path = (pg)-[*]->()
+      OPTIONAL MATCH (k:Keyword) WHERE NOT (k)--()
+      WITH path, k, pg, pg AS removed
+      DETACH DELETE path, k, pg
+      RETURN pg AS productgroup
+      """
+    )
+
+  # Cypher to remove products from group
+  RemoveProducts(groupId: Int!, prodIds: [Int!]!): ProductGroup!
+    @hasScope(scopes: ["MANAGE_PRODUCTS"])
+    @cypher(
+      statement: """
+      MATCH (pg)-[:GROUP_PRODUCT]->(p:Product)
+      WHERE ID(pg) = $groupId AND ID(p) IN $prodIds
+      OPTIONAL MATCH (p)-[:IN_PROMOTIONS]->(pr:Promotion)
+      OPTIONAL MATCH (k:Keyword) WHERE NOT (k)--()
+      DETACH DELETE p, k, pr
+      RETURN pg AS productgroup
+      """
+    )
+
+  # Cypher for creating a promotion group
+  CreatePromotionGroup(
+    storeId: Int
+    input: promotionGroupInput!
+  ): PromotionGroup
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)
+      WHERE ID(s) = $storeId
+      MERGE (s)-[:STORE_PROMOTIONS]->(pg:PromotionGroup{name: $input.name, description: $input.description, disabled: $input.disabled, category: $input.category})
+      RETURN pg AS promotiongroup
+      """
+    )
+
+  # Cypher for removing a promotion group
+  RemovePromotionGroup(storeId: Int, groupId: Int!): PromotionGroup
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-->(pg:PromotionGroup)
+      WHERE ID(s) = $storeId AND ID(pg) = $groupId
+      OPTIONAL MATCH path = (pg)-[*]->()
+      WITH path, pg AS removed, pg
+      DETACH DELETE path, pg
+      RETURN removed AS productgroup
+      """
+    )
+
+  # Cypher for removing one or more promotions
+  RemovePromotions(storeId: Int, promotionsIds: [Int!]!): [Promotion!]
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-[*..2]-(pr:Promotion)
+      WHERE ID(s) = $storeId AND ID(pr) IN $promotionsIds
+      WITH pr AS removed, pr
+      DETACH DELETE pr
+      RETURN removed AS promotion
+      """
+    )
+
+  # Cypher for updating a product group specific to a store
+  UpdatePromotionGroup(
+    storeId: Int
+    groupId: Int!
+    input: promotionGroupInput!
+  ): PromotionGroup
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-->(pg:PromotionGroup)
+      WHERE ID(s) = $storeId AND ID(pg) = $groupId
+      SET pg += $input
+      RETURN pg AS productgroup
+      """
+    )
+
+  # Cypher for disabling a promotion group
+  SetPromotionGroupStatus(
+    storeId: Int
+    groupId: Int!
+    status: Boolean!
+  ): PromotionGroup!
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-->(pg:PromotionGroup)
+      WHERE ID(s) = $storeId AND ID(pg) = $groupId
+      SET pg.disabled = $status
+      RETURN pg AS promotiongroup
+      """
+    )
+
+  # Cypher for linking a promotion group to product groups
+  LinkPromotionGroupToProductGroups(
+    storeId: Int
+    promoGroupId: Int!
+    productGroups: [Int!]!
+  ): PromotionGroup!
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (promoGroup:PromotionGroup)
+      WHERE ID(promoGroup) = $promoGroupId
+      WITH promoGroup
+      OPTIONAL MATCH (promoGroup)-[rel:LINKED]-(prodGroup:ProductGroup)
+      DELETE rel
+      WITH promoGroup
+      MATCH (prodGroup:ProductGroup)<-[:PRODUCT_GROUP]-(s:Store)-[:STORE_PROMOTIONS]->(promoGroup)
+      WHERE ID(s) = $storeId AND ID(prodGroup) IN $productGroups
+      MERGE (promoGroup)-[:LINKED]->(prodGroup)
+      RETURN promoGroup
+      """
+    )
+
+  UnlinkPromotionGroup(storeId: Int, promoGroupId: Int!): PromotionGroup!
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-[:STORE_PROMOTIONS]->(promoGroup)-[rel:LINKED]->(prodGroup)
+      WHERE ID(s) = $storeId AND ID(promoGroup) = $promoGroupId
+      DELETE rel
+      RETURN promoGroup AS promotiongroup
+      """
+    )
+
+  # Mutation adds promotions of BUNDLE type
+  GenerateBundlePromotions(
+    storeId: Int
+    maxProducts: Int!
+    promoGroupId: Int!
+    groupData: promotionInput!
+  ): [Promotion!]
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-[:STORE_PROMOTIONS]->(promoGroup:PromotionGroup)-[:LINKED]->(pg:ProductGroup)-[:GROUP_PRODUCT]->(p:Product)<-[:KEYWORD]-(k:Keyword)
+      WHERE ID(s) = $storeId AND ID(promoGroup) = $promoGroupId AND NOT (p)-[:IN_PROMOTION]->(:Promotion{type: $groupData.type, discount: $groupData.discount, expires: $groupData.expires})
+      WITH k, COLLECT(p) AS products, promoGroup
+      WITH DISTINCT products, COLLECT(k) AS keywords, promoGroup
+      WITH products, keywords, SIZE(products) AS prodsAmount, SIZE(keywords) AS keysAmount, promoGroup
+      WHERE prodsAmount IN RANGE(2, $maxProducts)
+      CREATE (pr:Promotion{type: $groupData.type, discount: $groupData.discount, expires: $groupData.expires})
+      MERGE (promoGroup)-[:GENERATED_PROMOTION]->(pr)
+      FOREACH(product IN products | MERGE (pr)<-[:IN_PROMOTION]-(product))
+      RETURN pr AS promotion
+      """
+    )
+
+  # Mutation adds promotions of DISCOUNT type
+  GenerateDiscountPromotions(
+    storeId: Int
+    promoGroupId: Int!
+    groupData: promotionInput!
+  ): [Promotion!]
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-[:STORE_PROMOTIONS]->(promoGroup:PromotionGroup)-[:LINKED]->(pg:ProductGroup)-[:GROUP_PRODUCT]->(p:Product)
+      WHERE ID(s) = $storeId AND ID(promoGroup) = $promoGroupId AND NOT (p)-[:IN_PROMOTION]->(:Promotion{type: $groupData.type, discount: $groupData.discount, expires: $groupData.expires})
+      CREATE (pr:Promotion{type: $groupData.type, discount: $groupData.discount, expires: $groupData.expires})
+      MERGE (promoGroup)-[:GENERATED_PROMOTION]->(pr)
+      MERGE (pr)<-[:IN_PROMOTION]-(p)
+      RETURN pr AS promotion
+      """
+    )
+
+  # Mutation adds promotions of BOGOFF type
+  GenerateBogoffPromotions(
+    storeId: Int
+    promoGroupId: Int!
+    groupData: promotionInput!
+  ): [Promotion!]
+    @isAuthenticated
+    @hasScope(scopes: ["MANAGE_PROMOTIONS"])
+    @cypher(
+      statement: """
+      MATCH (s:Store)-[:STORE_PROMOTIONS]->(promoGroup:PromotionGroup)-[:LINKED]->(pg:ProductGroup)-[:GROUP_PRODUCT]->(p:Product)
+      WHERE ID(s) = $storeId AND ID(promoGroup) = $promoGroupId AND NOT (p)-[:IN_PROMOTION]->(:Promotion{type: $groupData.type, priceInflation: $groupData.priceInflation, expires: $groupData.expires})
+      CREATE (pr:Promotion{type: $groupData.type, priceInflation: $groupData.priceInflation, expires: $groupData.expires})
+      MERGE (promoGroup)-[:GENERATED_PROMOTION]->(pr)
+      MERGE (pr)<-[:IN_PROMOTION]-(p)
+      RETURN pr AS promotion
+      """
+    )
+
+  # Get user account by email
+  GetUserByEmail(
+    email: String!
+  ): User
+    @cypher(
+      statement: """
+      MATCH (u:User{email: $email})
+      RETURN u AS user
+      """
+    )
+
+  # Register new user account
+  RegisterNewUser(
+    userInput: userInput!
+    deviceInfo: deviceInput!
+  ): User!
+    @cypher(
+      statement: """
+      CREATE (u:User{
+        avatar: $userInput.avatar,
+        firstName: $userInput.firstName, 
+        lastName: $userInput.lastName,
+        email: $userInput.email,
+        password: $userInput.password
+      })-[:ACCOUNT_DETAILS]->(:UserAccount{
+        appMode: 'privacy',
+        shareLocation: false,
+        smsNotifications: false,
+        emailNotifications: false,
+        twoFactorAuth: false,
+        theme: 'light',
+        fontScale: 1.0,
+        accountDisabled: false
+      })
+      WITH u
+      MERGE (u)<-[:OWNER]-(:Device{
+        platform: $deviceInfo.platform,
+        loggedIn: false
+      })
+      RETURN u AS user
+      """
+    )
+
+  # Update user account details
+  UpdateUserAccount(
+    userId: Int
+    accountDetails: userAccountInput!
+  ): User!
+  @isAuthenticated
+  @cypher(
+    statement: """
+    MATCH (u:User)-[:ACCOUNT_DETAILS]->(ua:UserAccount)
+    WHERE ID(u) = $userId
+    SET ua += $accountDetails
+    RETURN u AS user
+    """
+  )
+
+  # Update user details
+  UpdateUserDetails(
+    userId: Int
+    userInput: userInput!
+  ): User!
+  @isAuthenticated
+  @cypher(
+    statement: """
+    MATCH (u:User)
+    WHERE ID(u) = $userId
+    SET u += userInput
+    RETURN u AS user
+    """
+  )
+
+  # Update user password
+  UpdateUserPassword(
+    userId: Int
+    newPassword: String!
+  ): User!
+  @isAuthenticated
+  @cypher(
+    statement: """
+    MATCH (u:User)
+    WHERE ID(u) = $userId
+    SET u.password = $newPassword
+    RETURN u AS user
+    """
+  )
+
+  # Delete user with related nodes
+  DeleteUser(
+    userId: Int
+  ): User!
+  @isAuthenticated
+  @cypher(
+    statement: """
+    MATCH (u:User)
+    WHERE ID(u) = $userId
+    MATCH (u)-[:ACCOUNT_DETAILS]->(ua:UserAccount)
+    MATCH (u)<-[:OWNER]-(d:Device)
+    WITH u, ua, d, u AS removed
+    DETACH DELETE u, ua, d
+    RETURN removed AS user
+    """
+  )
+
+  # Deactivate user account
+  ToggleAccountDisabled(
+    userId: Int
+    accountDisabled: Boolean!
+  ): User!
+  @isAuthenticated
+  @cypher(
+    statement: """
+    MATCH (u:User)
+    WHERE ID(u) = $userId
+    MATCH (u)-[:ACCOUNT_DETAILS]->(ua:UserAccount)
+    SET ua.accountDisabled = $accountDisabled
+    RETURN u AS user
+    """
+  )
+
+  # User viewed promotion mutation
+  UserViewedPromotion(
+    userId: Int
+    promoId: Int!
+  ): User!
+  @isAuthenticated
+  @cypher(
+    statement: """
+    MATCH (u:User), (p:Promotion)
+    WHERE ID(u) = $userId AND ID(p) = $promoId
+    MERGE (u)-[vpr:VIEWED_PROMOTION]->(p)
+    ON CREATE SET vpr.amount = 0
+    SET vpr.amount = vpr.amount + 1
+    RETURN u AS user
+    """
+  )
+
+  # User toggles used promotion promotion mutation
+  RemoveUsedPromotion(
+    userId: Int
+    promoId: Int!
+  ): User!
+  @isAuthenticated
+  @cypher(
+    statement: """
+    MATCH (u:User), (p:Promotion)
+    WHERE ID(u) = $userId AND ID(p) = $promoId
+    MATCH (u)-[vpr:USED_PROMOTION]->(p)
+    DELETE vpr
+    RETURN u AS user
+    """
+  )
+
+  # User toggles used promotion promotion mutation
+  SetUsedPromotion(
+    userId: Int
+    promoId: Int!
+  ): User!
+  @isAuthenticated
+  @cypher(
+    statement: """
+    MATCH (u:User), (p:Promotion)
+    WHERE ID(u) = $userId AND ID(p) = $promoId
+    CREATE (u)-[vpr:USED_PROMOTION]->(p)
+    RETURN u AS user
+    """
+  )
+}

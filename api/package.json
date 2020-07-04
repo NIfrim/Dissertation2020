@@ -1,0 +1,55 @@
+{
+  "engines": {
+    "node": "14.x"
+  },
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "preinstall": "npx npm-force-resolutions",
+    "start": "npm run build && node build/index.js",
+    "dev": "./node_modules/.bin/nodemon --watch src --ext js,graphql --exec babel-node  src/index.js",
+    "build": "babel src -d build && shx cp .env build && shx cp src/schema.graphql build"
+  },
+  "author": "NM Ifrim",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-boost": "^0.4.9",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-link-http": "^1.5.17",
+    "apollo-server": "^2.15.1",
+    "apollo-server-express": "^2.15.1",
+    "babel-preset-env": "^1.7.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "csvtojson": "^2.0.10",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.6.0",
+    "graphql-auth-directives": "^2.2.0",
+    "graphql-tag": "^2.10.3",
+    "graphql-tools": "^4.0.8",
+    "graphql-type-json": "^0.3.2",
+    "jsonwebtoken": "^8.5.1",
+    "neo4j-driver": "^4.1.0",
+    "neo4j-graphql-js": "^2.14.3"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-arrow-functions": "^7.10.4",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.6",
+    "@types/graphql": "^14.5.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "nodemon": "^2.0.4",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.2",
+    "shx": "^0.3.2"
+  },
+  "resolutions": {
+    "**/**/fs-capacitor": "^6.2.0",
+    "**/graphql-upload": "^11.0.0"
+  }
+}
