@@ -77,7 +77,7 @@ const theme = createMuiTheme({
   }
 });
 
-const Main = props => {
+const Main = (props) => {
   useEffect(() => {
     store.dispatch(loadAccount());
   }, []);

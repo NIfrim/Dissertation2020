@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect
+} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 import './App.css';
 
 // Components
-import { Login, Promotions, Products, AccessGroups, Stores, Dashboard } from './components';
+import {
+  Login,
+  Promotions,
+  Products,
+  AccessGroups,
+  Stores,
+  Dashboard
+} from './components';
 import { Container, CssBaseline, makeStyles, Box } from '@material-ui/core';
 import { SideNav, TopBar, AlertContainer } from './components/layout';
 import PrivateRoute from './components/routing/PrivateRoute';
@@ -15,7 +27,7 @@ import PrivateRoute from './components/routing/PrivateRoute';
 import { connect } from 'react-redux';
 import { getProductGroups } from './actions/products';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     marginTop: 64,
     width: '100%',
@@ -26,7 +38,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const App = props => {
+const App = (props) => {
   const classes = useStyles();
   const {
     auth: { isAuthenticated },
@@ -58,8 +70,12 @@ const App = props => {
     <Router>
       <CssBaseline />
       {!isAuthenticated && <Redirect to={'/login'} />}
-      {isAuthenticated && <TopBar toggleSideNav={setSideNavOpen} sideNavOpen={sideNavOpen} />}
-      {isAuthenticated && <SideNav open={sideNavOpen} setOpen={setSideNavOpen} />}
+      {isAuthenticated && (
+        <TopBar toggleSideNav={setSideNavOpen} sideNavOpen={sideNavOpen} />
+      )}
+      {isAuthenticated && (
+        <SideNav open={sideNavOpen} setOpen={setSideNavOpen} />
+      )}
       <Box component={'div'} display={'flex'} overflow={'auto'} width={'100%'}>
         <Container className={clsx({ [classes.main]: isAuthenticated })}>
           <Switch>

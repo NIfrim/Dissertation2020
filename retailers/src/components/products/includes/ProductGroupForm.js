@@ -6,18 +6,33 @@ import { connect } from 'react-redux';
 import { updateProductGroup } from '../../../actions/products';
 
 // Components
-import { Typography, Grid, makeStyles, FormControl, FormHelperText, Box, Button, Divider } from '@material-ui/core';
+import {
+  Typography,
+  Grid,
+  makeStyles,
+  FormControl,
+  FormHelperText,
+  Box,
+  Button,
+  Divider
+} from '@material-ui/core';
 import { TextInput, Label, InteractiveTooltip } from '../../includes';
 import { CustomDropzone } from '../../includes';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   modalHeader: {
     display: 'flex',
     flexDirection: 'row'
   }
 }));
 
-const ProductGroupForm = ({ data, auth: { account }, setVisible, updateProductGroup, editing = false }) => {
+const ProductGroupForm = ({
+  data,
+  auth: { account },
+  setVisible,
+  updateProductGroup,
+  editing = false
+}) => {
   const classes = useStyles();
 
   const initValues = {
@@ -31,7 +46,7 @@ const ProductGroupForm = ({ data, auth: { account }, setVisible, updateProductGr
   const [formData, setFormData] = useState(data ? data : initValues);
   const { _id, name, description, files, disabled } = formData;
 
-  const handleFormInput = e => {
+  const handleFormInput = (e) => {
     if (!!e.target) {
       setFormData({ ...formData, [e.target.name]: e.target.value });
     } else {
@@ -41,7 +56,7 @@ const ProductGroupForm = ({ data, auth: { account }, setVisible, updateProductGr
     }
   };
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const { title } = e.currentTarget;
 
     switch (title) {
@@ -55,13 +70,25 @@ const ProductGroupForm = ({ data, auth: { account }, setVisible, updateProductGr
     }
   };
 
-  const handleFormSubmit = e => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
     // Create using the same mutation for update
     // @params (storeId = null, groupId = null, productGroup = {}, files = [], editing = false)
     !editing
-      ? updateProductGroup(parseInt(account.store._id), null, { name, description, disabled }, files, false)
-      : updateProductGroup(parseInt(account.store._id), parseInt(_id), { name, description, disabled }, files, true);
+      ? updateProductGroup(
+          parseInt(account.store._id),
+          null,
+          { name, description, disabled },
+          files,
+          false
+        )
+      : updateProductGroup(
+          parseInt(account.store._id),
+          parseInt(_id),
+          { name, description, disabled },
+          files,
+          true
+        );
 
     // Reset and close form
     if (formData.name && !editing) {
@@ -77,14 +104,20 @@ const ProductGroupForm = ({ data, auth: { account }, setVisible, updateProductGr
           Product Group Information
         </Typography>
         <Typography variant={'body2'}>
-          Create a product group to store your products. These can then be linked to promotions, so we recommmend
-          creating the product groups for the related promotion groups.
+          Create a product group to store your products. These can then be
+          linked to promotions, so we recommmend creating the product groups for
+          the related promotion groups.
         </Typography>
       </Box>
 
       <form>
         {/* GROUP NAME */}
-        <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'}>
+        <FormControl
+          className={'row formRow'}
+          fullWidth
+          variant={'outlined'}
+          margin={'dense'}
+        >
           <Label htmlFor={'name'}>Group Name</Label>
           <TextInput
             id={'name'}
@@ -102,7 +135,12 @@ const ProductGroupForm = ({ data, auth: { account }, setVisible, updateProductGr
         </FormControl>
 
         {/* GROUP DESCRIPTION */}
-        <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'}>
+        <FormControl
+          className={'row formRow'}
+          fullWidth
+          variant={'outlined'}
+          margin={'dense'}
+        >
           <Label htmlFor={'description'}>Description</Label>
           <TextInput
             id={'description'}
@@ -116,7 +154,11 @@ const ProductGroupForm = ({ data, auth: { account }, setVisible, updateProductGr
           />
         </FormControl>
 
-        <Divider variant={'fullWidth'} flexItem={true} orientation={'vertical'} />
+        <Divider
+          variant={'fullWidth'}
+          flexItem={true}
+          orientation={'vertical'}
+        />
         <Box display={'flex'} flexDirection={'column'}>
           <Box display={'flex'} alignItems={'flex-start'} p={1}>
             <InteractiveTooltip
@@ -126,18 +168,24 @@ const ProductGroupForm = ({ data, auth: { account }, setVisible, updateProductGr
             />
             <Typography variant={'h5'}>Add products using a file:</Typography>
           </Box>
-          <CustomDropzone onChange={files => handleFormInput(files)} />
+          <CustomDropzone onChange={(files) => handleFormInput(files)} />
         </Box>
 
         {/* Form Actions */}
-        <Grid className={'row'} container item direction={'row'} justify={'space-between'}>
+        <Grid
+          className={'row'}
+          container
+          item
+          direction={'row'}
+          justify={'space-between'}
+        >
           <Button
             variant={'contained'}
             type={'button'}
             size={'medium'}
             color={'secondary'}
             title={'cancel'}
-            onClick={e => handleClick(e)}
+            onClick={(e) => handleClick(e)}
           >
             Cancel
           </Button>
@@ -168,4 +216,6 @@ const mapStateToProps = ({ auth }) => ({
   auth
 });
 
-export default connect(mapStateToProps, { updateProductGroup })(ProductGroupForm);
+export default connect(mapStateToProps, { updateProductGroup })(
+  ProductGroupForm
+);

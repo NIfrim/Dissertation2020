@@ -98,8 +98,7 @@ const AccessibilityForm = ({ account, updateAccountSettings }) => {
                     <Box mb={1} mt={1}>
                       <Typography variant={'body2'}>
                         Colour blind theme (Uses high contrast colours to make
-                        it easy to distinguish different interface elements and
-                        text.)
+                        it easier to read text.)
                       </Typography>
                     </Box>
                   }

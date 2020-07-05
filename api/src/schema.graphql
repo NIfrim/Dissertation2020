@@ -533,11 +533,11 @@ type Mutation {
                   disabled: $input.disabled, groupName: $input.groupName, type: $input.type, role: $input.role, scopes: $input.scopes
                 } WHEN NOT $input.username = ca.username THEN {
                   username: $input.username, disabled: $input.disabled, groupName: $input.groupName, type: $input.type, role: $input.role, scopes: $input.scopes
-                } 
+                }
                 ELSE {} END
 
       SET ca += CASE $input.password
-                WHEN NULL THEN {} 
+                WHEN NULL THEN {}
                 ELSE {
                   password: $input.password
                 }
@@ -771,7 +771,7 @@ type Mutation {
       statement: """
       MATCH (pg)-[:GROUP_PRODUCT]->(p:Product)
       WHERE ID(pg) = $groupId AND ID(p) IN $prodIds
-      OPTIONAL MATCH (p)-[:IN_PROMOTIONS]->(pr:Promotion)
+      OPTIONAL MATCH (p)-[:IN_PROMOTION]->(pr:Promotion)
       OPTIONAL MATCH (k:Keyword) WHERE NOT (k)--()
       DETACH DELETE p, k, pr
       RETURN pg AS productgroup
@@ -971,7 +971,7 @@ type Mutation {
       statement: """
       CREATE (u:User{
         avatar: $userInput.avatar,
-        firstName: $userInput.firstName, 
+        firstName: $userInput.firstName,
         lastName: $userInput.lastName,
         email: $userInput.email,
         password: $userInput.password

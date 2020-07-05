@@ -12,7 +12,6 @@
     "apollo-upload-client": "^13.x",
     "axios": "^0.19.2",
     "clsx": "^1.1.0",
-    "dotenv": "^8.2.0",
     "formik": "^2.1.4",
     "graphql": "^14.6.0",
     "material-table": "^1.57.2",

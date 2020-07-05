@@ -9,3 +9,11 @@ export const normalizeForGet = (string) => {
   const pattern = /\s/g;
   return string.trim().replace(pattern, '+');
 };
+
+export const capitalize = (value) => {
+  return !value
+    ? ''
+    : value[0] === value[0].toUpperCase()
+    ? value
+    : value[0].toUpperCase().concat(value.slice(1));
+};

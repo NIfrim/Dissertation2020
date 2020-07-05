@@ -35,7 +35,7 @@ export default (state = initState, action) => {
       return { ...state, loading: false, error: '' };
 
     case UPDATE_PRODUCT_GROUP:
-      state.productGroups = state.productGroups.map(elem => {
+      state.productGroups = state.productGroups.map((elem) => {
         if (elem._id === payload._id) elem = payload;
         return elem;
       });
@@ -43,20 +43,26 @@ export default (state = initState, action) => {
       return { ...state, loading: false, error: '' };
 
     case REMOVE_PRODUCT_GROUPS:
-      state.productGroups = state.productGroups.filter(elem => !payload.find(obj => obj._id === elem._id));
+      state.productGroups = state.productGroups.filter(
+        (elem) => !payload.find((obj) => obj._id === elem._id)
+      );
       return { ...state, loading: false, error: '' };
 
     case REMOVE_PRODUCTS:
-      state.productGroups = state.productGroups.map(elem =>
-        elem._id === payload._id ? { ...elem, products: payload.products } : elem
+      state.productGroups = state.productGroups.map((elem) =>
+        elem._id === payload._id
+          ? { ...elem, products: payload.products }
+          : elem
       );
       return { ...state, loading: false, error: '' };
 
     case UPDATE_PRODUCT:
-      state.productGroups = state.productGroups.map(elem => {
+      state.productGroups = state.productGroups.map((elem) => {
         if (parseInt(elem._id) === payload.groupId) {
           // Find the index of the updated product
-          const prodIndex = elem.products.map(obj => obj._id).indexOf(payload._id);
+          const prodIndex = elem.products
+            .map((obj) => obj._id)
+            .indexOf(payload._id);
           // Replace the product object with the edited one
           const { groupId, ...rest } = payload;
           elem.products[prodIndex] = rest;

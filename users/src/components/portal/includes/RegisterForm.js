@@ -19,6 +19,7 @@ import {
 import { connect } from 'react-redux';
 import { registerUser } from '../../../actions/auth';
 import { makeStyles } from '@material-ui/core/styles';
+import { capitalize } from '../../../utils';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,7 +65,9 @@ const RegisterForm = ({ device, registerUser }) => {
               label={'First Name'}
               type={'text'}
               className={classes.formField}
-              onChange={props.handleChange}
+              onChange={({ target }) =>
+                props.setFieldValue('firstName', capitalize(target.value))
+              }
               value={props.values.firstName}
               inputProps={{
                 className: 'form-field',
@@ -101,7 +104,9 @@ const RegisterForm = ({ device, registerUser }) => {
               label={'Last Name'}
               type={'text'}
               className={classes.formField}
-              onChange={props.handleChange}
+              onChange={({ target }) =>
+                props.setFieldValue('lastName', capitalize(target.value))
+              }
               value={props.values.lastName}
               inputProps={{
                 className: 'form-field',

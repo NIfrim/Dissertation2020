@@ -1,9 +1,9 @@
-import React, { useState, Fragment } from 'react'
-import PropTypes from 'prop-types'
+import React, { useState, Fragment } from 'react';
+import PropTypes from 'prop-types';
 
 // Redux
-import { connect } from 'react-redux'
-import { getCoordinates } from '../../../actions/map'
+import { connect } from 'react-redux';
+import { getCoordinates } from '../../../actions/map';
 
 // Components
 import {
@@ -17,30 +17,30 @@ import {
   IconButton,
   Typography,
   makeStyles
-} from '@material-ui/core'
-import { Label, TextInput } from '../../includes'
-import LocationPicker from './LocationPicker'
-import clsx from 'clsx'
-import { Spinner } from '../../layout'
+} from '@material-ui/core';
+import { Label, TextInput } from '../../includes';
+import LocationPicker from './LocationPicker';
+import clsx from 'clsx';
+import { Spinner } from '../../layout';
 
-const useStyles = makeStyles(theme => ({}))
+const useStyles = makeStyles((theme) => ({}));
 
 const MapDialog = ({ map, location, getCoordinates }) => {
-  const classes = useStyles()
+  const classes = useStyles();
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
-  const mapModalHandler = e => {
-    setOpen(!open)
-  }
+  const mapModalHandler = (e) => {
+    setOpen(!open);
+  };
 
   const handleSearchMap = ({ target, type, key }) => {
     if (type === 'keypress') {
       if (key === 'Enter') {
-        getCoordinates(target.value, location._id)
+        getCoordinates(target.value, location._id);
       }
     }
-  }
+  };
 
   return (
     <Fragment>
@@ -119,17 +119,17 @@ const MapDialog = ({ map, location, getCoordinates }) => {
         </DialogActions>
       </Dialog>
     </Fragment>
-  )
-}
+  );
+};
 
 MapDialog.propTypes = {
   map: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   getCoordinates: PropTypes.func.isRequired
-}
+};
 
 const mapStateToProps = ({ map }) => ({
   map
-})
+});
 
-export default connect(mapStateToProps, { getCoordinates })(MapDialog)
+export default connect(mapStateToProps, { getCoordinates })(MapDialog);

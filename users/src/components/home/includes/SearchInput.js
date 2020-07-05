@@ -19,7 +19,10 @@ const SearchInput = ({ filters, filterPromotions }) => {
     // 13 = Enter key; 8 = backspace
     if (event.keyCode === 13) {
       filterPromotions({ ...filters, keyword: keyword });
-    } else if (event.keyCode === 8 && keyword.length === 0) {
+    } else if (
+      event.keyCode === 8 ||
+      (event.keyCode === 67 && keyword.length === 0)
+    ) {
       filterPromotions({ ...filters, keyword: keyword });
     }
   };

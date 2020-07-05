@@ -7,19 +7,35 @@ import { getCoordinates } from '../../../actions/map';
 import { updateStore } from '../../../actions/stores';
 
 // Components
-import { Typography, Grid, makeStyles, FormControl, FormHelperText, Box, IconButton, Button } from '@material-ui/core';
+import {
+  Typography,
+  Grid,
+  makeStyles,
+  FormControl,
+  FormHelperText,
+  Box,
+  IconButton,
+  Button
+} from '@material-ui/core';
 import { TextInput, Label } from '../../includes';
 import { ErrorBoundary } from '../../layout';
 import MapDialog from './MapDialog';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   modalHeader: {
     display: 'flex',
     flexDirection: 'row'
   }
 }));
 
-const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, editing = false }) => {
+const StoreInfoForm = ({
+  data,
+  app: { loading },
+  map,
+  setVisible,
+  updateStore,
+  editing = false
+}) => {
   const classes = useStyles();
 
   const initValues = {
@@ -44,14 +60,28 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
       groupName: 'Store Super',
       type: 'STORE_ACCOUNT',
       role: 'STORE_SUPER',
-      scopes: ['MANAGE_STORE_ACCESS_GROUPS', 'MANAGE_PRODUCTS', 'MANAGE_PROMOTIONS', 'MANAGE_STORE_DETAILS']
+      scopes: [
+        'MANAGE_STORE_ACCESS_GROUPS',
+        'MANAGE_PRODUCTS',
+        'MANAGE_PROMOTIONS',
+        'MANAGE_STORE_DETAILS'
+      ]
     }
   };
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState(initValues);
 
-  const { locationId, country, number, city, street, postcode, latitude, longitude } = map;
+  const {
+    locationId,
+    country,
+    number,
+    city,
+    street,
+    postcode,
+    latitude,
+    longitude
+  } = map;
 
   // eslint-disable-next-line
   useEffect(() => {
@@ -99,7 +129,7 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
     }
   };
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const { title } = e.currentTarget;
 
     switch (title) {
@@ -113,7 +143,7 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
     }
   };
 
-  const handleFormSubmit = e => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
     // Create using the same mutation for update
     // @params (storeId, formData, editing)
@@ -159,13 +189,19 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
           Store Information
         </Typography>
         <Typography variant={'body2'}>
-          Add the main access details from here. Location can also be picked through the provided picker.
+          Add the main access details from here. Location can also be picked
+          through the provided picker.
         </Typography>
       </Box>
 
       <form>
         {/* STORE NAME FIELD */}
-        <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'}>
+        <FormControl
+          className={'row formRow'}
+          fullWidth
+          variant={'outlined'}
+          margin={'dense'}
+        >
           <Label htmlFor={'storeName'}>Store Name</Label>
           <TextInput
             id={'storeName'}
@@ -185,7 +221,12 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
 
         {/* STORE ACCOUNT USERNAME */}
         {!editing ? (
-          <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'}>
+          <FormControl
+            className={'row formRow'}
+            fullWidth
+            variant={'outlined'}
+            margin={'dense'}
+          >
             <Label htmlFor={'username'}>Account Username</Label>
             <TextInput
               id={'username'}
@@ -208,7 +249,12 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
 
         {!editing ? (
           <ErrorBoundary>
-            <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'}>
+            <FormControl
+              className={'row formRow'}
+              fullWidth
+              variant={'outlined'}
+              margin={'dense'}
+            >
               <Label htmlFor={'password'}>Account Password</Label>
               <TextInput
                 id={'password'}
@@ -216,16 +262,29 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
                 name={'password'}
                 onChange={handleFormInput}
                 labelWidth={170}
-                value={!!formData.account.password ? formData.account.password : ''}
+                value={
+                  !!formData.account.password ? formData.account.password : ''
+                }
                 endAdornment={
-                  <IconButton onClick={e => setPasswordVisible(!passwordVisible)} size={'small'}>
-                    <i className={'material-icons'}>{passwordVisible ? 'visibility_off' : 'visibility'}</i>
+                  <IconButton
+                    onClick={(e) => setPasswordVisible(!passwordVisible)}
+                    size={'small'}
+                  >
+                    <i className={'material-icons'}>
+                      {passwordVisible ? 'visibility_off' : 'visibility'}
+                    </i>
                   </IconButton>
                 }
                 autoComplete={'new-password'}
                 required
               />
-              <FormHelperText error hidden={!!formData.account.password && formData.account.password !== ''}>
+              <FormHelperText
+                error
+                hidden={
+                  !!formData.account.password &&
+                  formData.account.password !== ''
+                }
+              >
                 *required
               </FormHelperText>
             </FormControl>
@@ -236,7 +295,13 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
 
         {formData.location && !loading ? (
           <Fragment>
-            <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'} disabled>
+            <FormControl
+              className={'row formRow'}
+              fullWidth
+              variant={'outlined'}
+              margin={'dense'}
+              disabled
+            >
               <Label htmlFor={'country'}>Country</Label>
               <TextInput
                 id={'country'}
@@ -249,7 +314,13 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
                 required
               />
             </FormControl>
-            <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'} disabled>
+            <FormControl
+              className={'row formRow'}
+              fullWidth
+              variant={'outlined'}
+              margin={'dense'}
+              disabled
+            >
               <Label htmlFor={'city'}>City</Label>
               <TextInput
                 id={'city'}
@@ -263,7 +334,13 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
               />
             </FormControl>
             <Grid container direction={'row'}>
-              <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'} disabled>
+              <FormControl
+                className={'row formRow'}
+                fullWidth
+                variant={'outlined'}
+                margin={'dense'}
+                disabled
+              >
                 <Label htmlFor={'number'}>Number</Label>
                 <TextInput
                   id={'number'}
@@ -276,7 +353,13 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
                 />
               </FormControl>
 
-              <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'} disabled>
+              <FormControl
+                className={'row formRow'}
+                fullWidth
+                variant={'outlined'}
+                margin={'dense'}
+                disabled
+              >
                 <Label htmlFor={'street'}>Road</Label>
                 <TextInput
                   id={'street'}
@@ -289,7 +372,13 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
                 />
               </FormControl>
             </Grid>
-            <FormControl className={'row formRow'} fullWidth variant={'outlined'} margin={'dense'} disabled>
+            <FormControl
+              className={'row formRow'}
+              fullWidth
+              variant={'outlined'}
+              margin={'dense'}
+              disabled
+            >
               <Label htmlFor={'postcode'}>Postcode</Label>
               <TextInput
                 id={'postcode'}
@@ -310,14 +399,20 @@ const StoreInfoForm = ({ data, app: { loading }, map, setVisible, updateStore, e
         <MapDialog location={data ? formData.location : map} />
 
         {/* Form Actions */}
-        <Grid className={'row'} container item direction={'row'} justify={'space-between'}>
+        <Grid
+          className={'row'}
+          container
+          item
+          direction={'row'}
+          justify={'space-between'}
+        >
           <Button
             variant={'contained'}
             type={'button'}
             size={'medium'}
             color={'secondary'}
             title={'cancel'}
-            onClick={e => handleClick(e)}
+            onClick={(e) => handleClick(e)}
           >
             Cancel
           </Button>
@@ -352,4 +447,6 @@ const mapStateToProps = ({ app, map }) => ({
   map
 });
 
-export default connect(mapStateToProps, { getCoordinates, updateStore })(StoreInfoForm);
+export default connect(mapStateToProps, { getCoordinates, updateStore })(
+  StoreInfoForm
+);

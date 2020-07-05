@@ -1,27 +1,20 @@
 import {
-  ApolloServer,
+  ApolloServer
   // PubSub
-} from 'apollo-server-express'
-import {graphqlUploadExpress} from 'graphql-upload'
-import http from 'http'
-import dotenv from 'dotenv'
-import cors from 'cors'
-import neo4j from 'neo4j-driver'
-import {
-  typeDefs,
-  resolvers
-} from './graphql-schema.js'
-import {
-  makeAugmentedSchema
-} from 'neo4j-graphql-js'
-import express from 'express'
+} from 'apollo-server-express';
+import { graphqlUploadExpress } from 'graphql-upload';
+import http from 'http';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import neo4j from 'neo4j-driver';
+import { typeDefs, resolvers } from './graphql-schema.js';
+import { makeAugmentedSchema } from 'neo4j-graphql-js';
+import express from 'express';
 import {
   IsAuthenticatedDirective,
   HasScopeDirective
-} from 'graphql-auth-directives'
-import {
-  shutdown
-} from '../utils'
+} from 'graphql-auth-directives';
+import { shutdown } from '../utils';
 // Routes imports
 // import {
 //   auth,
@@ -32,11 +25,11 @@ import {
 //   accounts
 // } from './routes'
 
-const app = express()
+const app = express();
 // const pubSub = new PubSub()
-const PORT = process.env.GRAPHQL_PORT || 4001
+const PORT = process.env.GRAPHQL_PORT || 4001;
 
-dotenv.config()
+dotenv.config();
 
 const driver = neo4j.driver(
   process.env.NEO4J_URI || 'bolt://51.141.95.124:7687',
@@ -44,7 +37,7 @@ const driver = neo4j.driver(
     process.env.NEO4J_USER || 'admin',
     process.env.NEO4J_PASSWORD || 'Dissertation2020!'
   )
-)
+);
 
 const schema = makeAugmentedSchema({
   typeDefs,
@@ -59,7 +52,7 @@ const schema = makeAugmentedSchema({
     },
     mutation: false
   }
-})
+});
 
 const corsOptions = {
   origin: '*',
@@ -68,15 +61,12 @@ const corsOptions = {
 
 const server = new ApolloServer({
   uploads: false,
-  context: async ({
-    req
-  }) => {
-
+  context: async ({ req }) => {
     return {
       driver,
-      req,
+      req
       // pubSub
-    }
+    };
   },
   introspection: true,
   playground: true,
@@ -86,10 +76,10 @@ const server = new ApolloServer({
   // },
   schema,
   cors: corsOptions
-})
+});
 
 // Middleware
-app.use(cors(corsOptions))
+app.use(cors(corsOptions));
 app.use(graphqlUploadExpress({ maxFileSize: 100000, maxFiles: 1 }));
 // app.use(express.json({
 //   extended: false
@@ -104,25 +94,25 @@ app.use(graphqlUploadExpress({ maxFileSize: 100000, maxFiles: 1 }));
 // app.use('/api/auth', auth)
 
 // File Upload Handlers
-process.on('SIGINT', shutdown)
-process.on('SIGTERM', shutdown)
-process.on('SIGHUP', shutdown)
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+process.on('SIGHUP', shutdown);
 
 // Middleware to run for each request received
 app.get('/server_state', (req, res) => {
   res.status(200).json({
     msg: 'Server OK!'
-  })
-})
+  });
+});
 
 server.applyMiddleware({
   app,
   path: '/graphql'
-})
+});
 
-const httpServer = http.createServer(app)
+const httpServer = http.createServer(app);
 // server.installSubscriptionHandlers(httpServer)
 
 httpServer.listen(PORT, () => {
-  console.log(`GraphQL API ready at http://localhost:${PORT}/graphql`)
-})
+  console.log(`GraphQL API ready at http://localhost:${PORT}/graphql`);
+});

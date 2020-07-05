@@ -3,16 +3,30 @@ import PropTypes from 'prop-types';
 
 // Redux
 import { connect } from 'react-redux';
-import { updateProductGroup, removeProductGroups, removeProducts } from '../../../actions/products';
+import {
+  updateProductGroup,
+  removeProductGroups,
+  removeProducts
+} from '../../../actions/products';
 
 // Components
-import { Typography, Grid, makeStyles, Button, Checkbox, Paper, Divider, Collapse, Box } from '@material-ui/core';
+import {
+  Typography,
+  Grid,
+  makeStyles,
+  Button,
+  Checkbox,
+  Paper,
+  Divider,
+  Collapse,
+  Box
+} from '@material-ui/core';
 import clsx from 'clsx';
 import ProductGroupForm from './ProductGroupForm';
 import { useTheme } from '@material-ui/styles';
 import LinkedProductsTable from './LinkedProductsTable';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   disabled: {
     backgroundColor: theme.palette.common.grey
   }
@@ -23,27 +37,20 @@ const ProductGroupCard = ({
   checkboxHandler,
   updateProductGroup,
   removeProductGroups,
-  removeProducts,
   groupData
 }) => {
   const classes = useStyles();
   const theme = useTheme();
 
   const [editing, setEditing] = useState(false);
-  const [cardData, setCardData] = useState({ ...groupData });
 
-  const { _id, name, description, disabled } = cardData;
-
-  // const handleRemoveSelected = (e, data) => {
-  //   const prodIds = data.map(elem => parseInt(elem._id))
-  //   removeProducts(parseInt(_id), prodIds)
-  // }
+  const { _id, name, description, disabled } = groupData;
 
   const collapseHandler = () => {
     setEditing(!editing);
   };
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const { title } = e.currentTarget;
 
     switch (title) {
@@ -90,30 +97,30 @@ const ProductGroupCard = ({
 
   // const handleSubmit = e => {
   //   e.preventDefault()
-  //   const { _id, location, ...rest } = cardData
+  //   const { _id, location, ...rest } = groupData
   //   // Create using the same mutation for update
-  //   // @params (accountId, cardData, editing)
+  //   // @params (accountId, groupData, editing)
   //   updateProductGroup(parseInt(_id), { input: { ...rest } }, true)
   //   setEditing(false)
   // }
 
   // const handleFormInput = ({ target }) => {
-  //   if (Object.keys(cardData.store).includes(target.name)) {
+  //   if (Object.keys(groupData.store).includes(target.name)) {
   //     setCardData({
-  //       ...cardData,
-  //       store: { ...cardData.store, [target.name]: target.value }
+  //       ...groupData,
+  //       store: { ...groupData.store, [target.name]: target.value }
   //     })
-  //   } else if (Object.keys(cardData.location).includes(target.name)) {
+  //   } else if (Object.keys(groupData.location).includes(target.name)) {
   //     setCardData({
-  //       ...cardData,
-  //       location: { ...cardData.location, [target.name]: target.value }
+  //       ...groupData,
+  //       location: { ...groupData.location, [target.name]: target.value }
   //     })
   //   }
   // }
 
   return (
     <Paper
-      className={clsx('cardDataRow', {
+      className={clsx('groupDataRow', {
         [classes.disabled]: disabled
       })}
       elevation={disabled ? 0 : 2}
@@ -126,17 +133,34 @@ const ProductGroupCard = ({
         alignItems={'center'}
         justify={'space-evenly'}
       >
-        <Checkbox name={'accountCheckbox'} value={_id} onChange={checkboxHandler} />
+        <Checkbox
+          name={'accountCheckbox'}
+          value={_id}
+          onChange={checkboxHandler}
+        />
         <Grid item container direction={'row'} justify={'flex-start'}>
           <Box marginLeft={theme.spacing(0.1)}>
             <Typography variant={'body2'}>id: {_id}</Typography>
           </Box>
           <Box marginLeft={theme.spacing(0.3)}>
-            <Typography variant={'body2'}>name: {!!name ? name : ''}</Typography>
+            <Typography variant={'body2'}>
+              name: {!!name ? name : ''}
+            </Typography>
           </Box>
         </Grid>
-        <Grid item container direction={'row'} wrap={'nowrap'} justify={'flex-end'}>
-          <Button variant={'outlined'} size={'small'} color={'secondary'} onClick={collapseHandler}>
+        <Grid
+          item
+          container
+          direction={'row'}
+          wrap={'nowrap'}
+          justify={'flex-end'}
+        >
+          <Button
+            variant={'outlined'}
+            size={'small'}
+            color={'secondary'}
+            onClick={collapseHandler}
+          >
             Edit
           </Button>
           <Button
@@ -148,7 +172,13 @@ const ProductGroupCard = ({
           >
             {disabled ? 'Enable' : 'Disable'}
           </Button>
-          <Button variant={'outlined'} size={'small'} color={'secondary'} onClick={handleClick} title={'remove'}>
+          <Button
+            variant={'outlined'}
+            size={'small'}
+            color={'secondary'}
+            onClick={handleClick}
+            title={'remove'}
+          >
             Remove
           </Button>
         </Grid>
@@ -157,9 +187,25 @@ const ProductGroupCard = ({
       <Divider />
 
       {/* Forms */}
-      <Collapse className={'cardCollapseSection'} in={editing} timeout='auto' unmountOnExit>
-        <Grid className={'row'} container direction={'row'} wrap={'nowrap'} justify={'space-evenly'}>
-          <ProductGroupForm key={`editForm_${_id}`} data={cardData} setVisible={setEditing} editing={true} />
+      <Collapse
+        className={'cardCollapseSection'}
+        in={editing}
+        timeout='auto'
+        unmountOnExit
+      >
+        <Grid
+          className={'row'}
+          container
+          direction={'row'}
+          wrap={'nowrap'}
+          justify={'space-evenly'}
+        >
+          <ProductGroupForm
+            key={`editForm_${_id}`}
+            data={groupData}
+            setVisible={setEditing}
+            editing={true}
+          />
         </Grid>
 
         {/* Table with products */}

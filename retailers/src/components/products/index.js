@@ -9,14 +9,28 @@ import { removeProductGroups } from '../../actions/products';
 import { InteractiveTooltip } from '../includes';
 import { Spinner } from '../layout';
 import { ProductGroupForm } from './includes';
-import { Typography, Grid, Button, Input, InputAdornment, Paper, Divider, Box, Collapse } from '@material-ui/core';
+import {
+  Typography,
+  Grid,
+  Button,
+  Input,
+  InputAdornment,
+  Paper,
+  Divider,
+  Box,
+  Collapse
+} from '@material-ui/core';
 import ProductGroupCard from './includes';
 
-const Products = ({ auth: { account }, products: { loading, error, productGroups }, removeProductGroups }) => {
+const Products = ({
+  auth: { account },
+  products: { loading, error, productGroups },
+  removeProductGroups
+}) => {
   const [newProductGroup, setNewProductGroup] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const { title } = e.currentTarget;
 
     switch (title) {
@@ -34,10 +48,13 @@ const Products = ({ auth: { account }, products: { loading, error, productGroups
   };
 
   const handleGroupSelected = ({ target: { value } }) => {
-    !selectedGroups.find(elem => elem === parseInt(value)) && setSelectedGroups([...selectedGroups, parseInt(value)]);
+    !selectedGroups.find((elem) => elem === parseInt(value)) &&
+      setSelectedGroups([...selectedGroups, parseInt(value)]);
 
-    selectedGroups.find(elem => elem === parseInt(value)) &&
-      setSelectedGroups(selectedGroups.filter(elem => elem !== parseInt(value)));
+    selectedGroups.find((elem) => elem === parseInt(value)) &&
+      setSelectedGroups(
+        selectedGroups.filter((elem) => elem !== parseInt(value))
+      );
   };
 
   return (
@@ -47,18 +64,28 @@ const Products = ({ auth: { account }, products: { loading, error, productGroups
       <Grid className={'row'} item container direction={'column'}>
         <Grid className={'row rowTitle'} container item direction={'row'}>
           <Typography variant={'h4'}>Products</Typography>
-          <InteractiveTooltip text={'From this section you can create product groups which can contain products'} />
+          <InteractiveTooltip
+            text={
+              'From this section you can create product groups which can contain products'
+            }
+          />
         </Grid>
         {/* Row content with container */}
         <Paper className={'row rowContentWrapper'}>
           <Grid className={'rowContent'} container item direction={'column'}>
             {/* Row Action area with buttons and search */}
-            <Grid container item direction={'row'} className={'row'} justify={'space-between'}>
+            <Grid
+              container
+              item
+              direction={'row'}
+              className={'row'}
+              justify={'space-between'}
+            >
               <Box>
                 <Button
                   variant={'contained'}
                   color={'primary'}
-                  onClick={e => handleClick(e)}
+                  onClick={(e) => handleClick(e)}
                   type={'button'}
                   title={'newProductGroup'}
                 >
@@ -67,7 +94,7 @@ const Products = ({ auth: { account }, products: { loading, error, productGroups
                 <Button
                   variant={'contained'}
                   color={'primary'}
-                  onClick={e => handleClick(e)}
+                  onClick={(e) => handleClick(e)}
                   type={'button'}
                   title={'removeSelected'}
                 >
@@ -86,20 +113,45 @@ const Products = ({ auth: { account }, products: { loading, error, productGroups
 
             <Divider />
 
-            <Collapse className={'newGroupCollapseSection'} in={newProductGroup} timeout='auto' unmountOnExit>
-              <Grid className={'row'} container direction={'row'} justify={'space-evenly'} wrap={'nowrap'}>
-                <ProductGroupForm key={'newStoreForm'} setVisible={setNewProductGroup} editing={false} />
+            <Collapse
+              className={'newGroupCollapseSection'}
+              in={newProductGroup}
+              timeout='auto'
+              unmountOnExit
+            >
+              <Grid
+                className={'row'}
+                container
+                direction={'row'}
+                justify={'space-evenly'}
+                wrap={'nowrap'}
+              >
+                <ProductGroupForm
+                  key={'newStoreForm'}
+                  setVisible={setNewProductGroup}
+                  editing={false}
+                />
               </Grid>
 
               <Divider variant={'fullWidth'} />
             </Collapse>
 
-            <Grid className={'column contentDataWrapper'} container direction={'column'}>
+            <Grid
+              className={'column contentDataWrapper'}
+              container
+              direction={'column'}
+            >
               {loading ? (
                 <Spinner />
               ) : (
-                productGroups.map(group => {
-                  return <ProductGroupCard key={group._id} checkboxHandler={handleGroupSelected} groupData={group} />;
+                productGroups.map((group) => {
+                  return (
+                    <ProductGroupCard
+                      key={group._id}
+                      checkboxHandler={handleGroupSelected}
+                      groupData={group}
+                    />
+                  );
                 })
               )}
             </Grid>

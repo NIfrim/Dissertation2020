@@ -26,19 +26,19 @@ import {
   UPDATE_PRODUCT_MUTATION
 } from './mutations';
 
-const productGroupsLoading = () => async dispatch => {
+const productGroupsLoading = () => async (dispatch) => {
   dispatch({
     type: PRODUCT_GROUPS_LOADING
   });
 };
 
-const productsLoading = () => async dispatch => {
+const productsLoading = () => async (dispatch) => {
   dispatch({
     type: PRODUCTS_LOADING
   });
 };
 
-export const getProductGroups = () => async dispatch => {
+export const getProductGroups = () => async (dispatch) => {
   try {
     dispatch(productGroupsLoading());
 
@@ -62,7 +62,9 @@ export const getProductGroups = () => async dispatch => {
   }
 };
 
-export const removeProductGroups = (storeId, groupIds = []) => async dispatch => {
+export const removeProductGroups = (storeId, groupIds = []) => async (
+  dispatch
+) => {
   const mutation = REMOVE_PRODUCT_GROUPS_MUTATION;
   const variables = { storeId, groupIds };
 
@@ -82,7 +84,13 @@ export const removeProductGroups = (storeId, groupIds = []) => async dispatch =>
         payload: newData.RemoveProductGroups
       });
 
-      dispatch(setAlert(`Removed a total of ${newData.RemoveProductGroups.length} groups.`, 'info', 3000));
+      dispatch(
+        setAlert(
+          `Removed a total of ${newData.RemoveProductGroups.length} groups.`,
+          'info',
+          3000
+        )
+      );
     }
   } catch (e) {
     console.error(`Error while removing product groups: ${e}`);
@@ -92,7 +100,9 @@ export const removeProductGroups = (storeId, groupIds = []) => async dispatch =>
       payload: e.message
     });
 
-    dispatch(setAlert('Errors encountered, see console for more', 'error', 4000));
+    dispatch(
+      setAlert('Errors encountered, see console for more', 'error', 4000)
+    );
   }
 };
 
@@ -102,16 +112,20 @@ export const updateProductGroup = (
   productGroup = null,
   files = [],
   edit = false
-) => async dispatch => {
+) => async (dispatch) => {
   try {
     if (!!!storeId || !!!productGroup.name) {
       dispatch(setAlert('Missing required inputs', 'info', 2000));
     } else {
       dispatch(productGroupsLoading());
 
-      const mutation = edit ? UPDATE_PRODUCT_GROUP_MUTATION : CREATE_PRODUCT_GROUP_MUTATION;
+      const mutation = edit
+        ? UPDATE_PRODUCT_GROUP_MUTATION
+        : CREATE_PRODUCT_GROUP_MUTATION;
 
-      const variables = edit ? { storeId, groupId, productGroup, files } : { storeId, productGroup, files };
+      const variables = edit
+        ? { storeId, groupId, productGroup, files }
+        : { storeId, productGroup, files };
 
       const { data } = await client.mutate({
         mutation: mutation,
@@ -144,11 +158,15 @@ export const updateProductGroup = (
       payload: e.message
     });
 
-    dispatch(setAlert('Errors ecountered, see console for more', 'error', 4000));
+    dispatch(
+      setAlert('Errors ecountered, see console for more', 'error', 4000)
+    );
   }
 };
 
-export const removeProducts = (groupId = null, prodIds = []) => async dispatch => {
+export const removeProducts = (groupId = null, prodIds = []) => async (
+  dispatch
+) => {
   const mutation = REMOVE_PRODUCTS_MUTATION;
   const variables = { groupId, prodIds };
 
@@ -168,7 +186,11 @@ export const removeProducts = (groupId = null, prodIds = []) => async dispatch =
       console.log(data.RemoveProducts.products);
 
       dispatch(
-        setAlert(`Removed one product, remaining ${data.RemoveProducts.products.length} products.`, 'info', 3000)
+        setAlert(
+          `Removed product/s, remaining ${data.RemoveProducts.products.length} products.`,
+          'info',
+          3000
+        )
       );
     }
   } catch (e) {
@@ -179,7 +201,13 @@ export const removeProducts = (groupId = null, prodIds = []) => async dispatch =
       payload: e.message
     });
 
-    dispatch(setAlert('Error while trying to remove products, see console for more', 'error', 4000));
+    dispatch(
+      setAlert(
+        'Error while trying to remove products, see console for more',
+        'error',
+        4000
+      )
+    );
   }
 };
 
@@ -188,7 +216,9 @@ export const removeProducts = (groupId = null, prodIds = []) => async dispatch =
  * @param {number} productId
  * @param {object} productInput
  */
-export const updateProduct = (groupId, productId, productInput) => async dispatch => {
+export const updateProduct = (groupId, productId, productInput) => async (
+  dispatch
+) => {
   try {
     dispatch(productsLoading());
 
@@ -209,7 +239,13 @@ export const updateProduct = (groupId, productId, productInput) => async dispatc
       payload: { ...newData.UpdateProduct, groupId }
     });
 
-    dispatch(setAlert(`Updated product with id: ${newData.UpdateProduct._id}`, 'success', 4000));
+    dispatch(
+      setAlert(
+        `Updated product with id: ${newData.UpdateProduct._id}`,
+        'success',
+        4000
+      )
+    );
   } catch (error) {
     console.error(`Error while updating product details: ${error}`);
 
@@ -218,6 +254,12 @@ export const updateProduct = (groupId, productId, productInput) => async dispatc
       payload: error.message
     });
 
-    dispatch(setAlert('Errors ecountered while updating product, see console for more', 'error', 4000));
+    dispatch(
+      setAlert(
+        'Errors ecountered while updating product, see console for more',
+        'error',
+        4000
+      )
+    );
   }
 };

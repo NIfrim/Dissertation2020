@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, InputLabel, OutlinedInput, FormHelperText, Button } from '@material-ui/core';
+import {
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  FormHelperText,
+  Button
+} from '@material-ui/core';
 import { updateProduct } from '../../../actions/products';
 import { connect } from 'react-redux';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -20,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 const ProductForm = ({ groupId, productData, updateProduct }) => {
   const classes = useStyles();
 
-  const handleSubmit = formData => {
+  const handleSubmit = (formData) => {
     const productId = parseInt(productData._id);
     updateProduct(groupId, productId, { ...formData });
   };
@@ -37,9 +43,9 @@ const ProductForm = ({ groupId, productData, updateProduct }) => {
           longDescription: productData.longDescription
         }}
         validationSchema={validationSchema}
-        onSubmit={formData => handleSubmit(formData)}
+        onSubmit={(formData) => handleSubmit(formData)}
       >
-        {props => (
+        {(props) => (
           <Form className={classes.root} onSubmit={props.handleSubmit}>
             <FormControl variant={'outlined'} className={'form-field-group'}>
               <InputLabel htmlFor='name' color={'primary'}>
@@ -59,7 +65,9 @@ const ProductForm = ({ groupId, productData, updateProduct }) => {
                 autoFocus
               />
               {props.errors.name && props.touched.name ? (
-                <FormHelperText id='name-error'>{props.errors.name}</FormHelperText>
+                <FormHelperText id='name-error'>
+                  {props.errors.name}
+                </FormHelperText>
               ) : null}
             </FormControl>
 
@@ -80,7 +88,9 @@ const ProductForm = ({ groupId, productData, updateProduct }) => {
                 autoComplete={'new-brand'}
               />
               {props.errors.brand && props.touched.brand ? (
-                <FormHelperText id='brand-error'>{props.errors.brand}</FormHelperText>
+                <FormHelperText id='brand-error'>
+                  {props.errors.brand}
+                </FormHelperText>
               ) : null}
             </FormControl>
 
@@ -101,7 +111,9 @@ const ProductForm = ({ groupId, productData, updateProduct }) => {
                 autoComplete={'new-price'}
               />
               {props.errors.price && props.touched.price ? (
-                <FormHelperText id='price-error'>{props.errors.price}</FormHelperText>
+                <FormHelperText id='price-error'>
+                  {props.errors.price}
+                </FormHelperText>
               ) : null}
             </FormControl>
 
@@ -122,7 +134,9 @@ const ProductForm = ({ groupId, productData, updateProduct }) => {
                 autoComplete={'new-stock'}
               />
               {props.errors.stock && props.touched.stock ? (
-                <FormHelperText id='stock-error'>{props.errors.stock}</FormHelperText>
+                <FormHelperText id='stock-error'>
+                  {props.errors.stock}
+                </FormHelperText>
               ) : null}
             </FormControl>
 
@@ -131,7 +145,10 @@ const ProductForm = ({ groupId, productData, updateProduct }) => {
                 Short Description
               </InputLabel>
               <OutlinedInput
-                error={props.errors.shortDescription && props.touched.shortDescription}
+                error={
+                  props.errors.shortDescription &&
+                  props.touched.shortDescription
+                }
                 id={'shortDescription'}
                 name={'shortDescription'}
                 label={'Short Description'}
@@ -143,8 +160,11 @@ const ProductForm = ({ groupId, productData, updateProduct }) => {
                 inputProps={{ className: 'form-field', autoCapitalize: 'on' }}
                 autoComplete={'new-shortDescription'}
               />
-              {props.errors.shortDescription && props.touched.shortDescription ? (
-                <FormHelperText id='shortDescription-error'>{props.errors.shortDescription}</FormHelperText>
+              {props.errors.shortDescription &&
+              props.touched.shortDescription ? (
+                <FormHelperText id='shortDescription-error'>
+                  {props.errors.shortDescription}
+                </FormHelperText>
               ) : null}
             </FormControl>
 
@@ -153,7 +173,9 @@ const ProductForm = ({ groupId, productData, updateProduct }) => {
                 Long Description
               </InputLabel>
               <OutlinedInput
-                error={props.errors.longDescription && props.touched.longDescription}
+                error={
+                  props.errors.longDescription && props.touched.longDescription
+                }
                 id={'longDescription'}
                 name={'longDescription'}
                 label={'Long Description'}
@@ -166,11 +188,18 @@ const ProductForm = ({ groupId, productData, updateProduct }) => {
                 autoComplete={'new-longDescription'}
               />
               {props.errors.longDescription && props.touched.longDescription ? (
-                <FormHelperText id='longDescription-error'>{props.errors.longDescription}</FormHelperText>
+                <FormHelperText id='longDescription-error'>
+                  {props.errors.longDescription}
+                </FormHelperText>
               ) : null}
             </FormControl>
 
-            <Button variant={'contained'} size={'large'} color={'primary'} type={'submit'}>
+            <Button
+              variant={'contained'}
+              size={'large'}
+              color={'primary'}
+              type={'submit'}
+            >
               Update
             </Button>
           </Form>

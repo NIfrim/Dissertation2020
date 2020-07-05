@@ -4,7 +4,11 @@ import PropTypes from 'prop-types';
 
 // Redux
 import { connect } from 'react-redux';
-import { getAccessGroups, updateAccessGroup, removeAccessGroups } from '../../actions/accessGroups';
+import {
+  getAccessGroups,
+  updateAccessGroup,
+  removeAccessGroups
+} from '../../actions/accessGroups';
 
 // Components
 import { InteractiveTooltip } from '../includes';
@@ -24,7 +28,7 @@ import {
 } from '@material-ui/core';
 import AccessGroupCard from './includes/AccessGroupCard';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
   row: {}
 }));
@@ -55,10 +59,19 @@ const AccessGroups = ({
 
   useEffect(() => {
     if (account) {
-      if (!account.scopes.find(elem => elem === 'MANAGE_ACCESS_GROUPS' || 'MANAGE_STORE_ACCESS_GROUPS')) {
+      if (
+        !account.scopes.find(
+          (elem) =>
+            elem === 'MANAGE_ACCESS_GROUPS' || 'MANAGE_STORE_ACCESS_GROUPS'
+        )
+      ) {
         return <Redirect to={'/'} />;
       }
-      getAccessGroups(account.type, account.company._id, account.store && account.store._id);
+      getAccessGroups(
+        account.type,
+        account.company._id,
+        account.store && account.store._id
+      );
     }
   }, [account, getAccessGroups]);
 
@@ -68,22 +81,22 @@ const AccessGroups = ({
 
       // If checkbox selected and value not added, then add value to scopes array
       checked &&
-        !scopes.find(elem => elem === target.value) &&
+        !scopes.find((elem) => elem === target.value) &&
         setFormData({ ...formData, scopes: [...scopes, value] });
 
       // If checkbos is unselected then remove value from scopes array
       !checked &&
-        scopes.find(elem => elem === target.value) &&
+        scopes.find((elem) => elem === target.value) &&
         setFormData({
           ...formData,
-          scopes: scopes.filter(elem => elem !== value)
+          scopes: scopes.filter((elem) => elem !== value)
         });
     } else {
       setFormData({ ...formData, [target.name]: target.value });
     }
   };
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const { title } = e.currentTarget;
 
     switch (title) {
@@ -105,7 +118,7 @@ const AccessGroups = ({
     }
   };
 
-  const handleSubmitNew = e => {
+  const handleSubmitNew = (e) => {
     e.preventDefault();
     // Create using the same mutation for update
     // @params (accountId, formData, edit, storeId)
@@ -119,10 +132,11 @@ const AccessGroups = ({
   };
 
   const handleGroupSelected = ({ target: { value } }) => {
-    !selectedGroups.find(elem => elem === value) && setSelectedGroups([...selectedGroups, parseInt(value)]);
+    !selectedGroups.find((elem) => elem === value) &&
+      setSelectedGroups([...selectedGroups, parseInt(value)]);
 
-    selectedGroups.find(elem => elem === parseInt(value)) &&
-      setSelectedGroups(selectedGroups.filter(elem => elem !== value));
+    selectedGroups.find((elem) => elem === parseInt(value)) &&
+      setSelectedGroups(selectedGroups.filter((elem) => elem !== value));
   };
 
   return (
@@ -138,12 +152,18 @@ const AccessGroups = ({
         <Paper className={'row rowContentWrapper'}>
           <Grid className={'rowContent'} container item direction={'column'}>
             {/* Row Action area with buttons and search */}
-            <Grid container item direction={'row'} className={'row'} justify={'space-between'}>
+            <Grid
+              container
+              item
+              direction={'row'}
+              className={'row'}
+              justify={'space-between'}
+            >
               <Box>
                 <Button
                   variant={'contained'}
                   color={'primary'}
-                  onClick={e => handleClick(e)}
+                  onClick={(e) => handleClick(e)}
                   type={'button'}
                   title={'newGroup'}
                 >
@@ -152,7 +172,7 @@ const AccessGroups = ({
                 <Button
                   variant={'contained'}
                   color={'primary'}
-                  onClick={e => handleClick(e)}
+                  onClick={(e) => handleClick(e)}
                   type={'button'}
                   title={'removeSelected'}
                 >
@@ -162,7 +182,10 @@ const AccessGroups = ({
 
               <Input
                 startAdornment={
-                  <InputAdornment className={classes.searchIcon} position={'start'}>
+                  <InputAdornment
+                    className={classes.searchIcon}
+                    position={'start'}
+                  >
                     <i className={'material-icons'}>search</i>
                   </InputAdornment>
                 }
@@ -171,27 +194,55 @@ const AccessGroups = ({
 
             <Divider />
 
-            <Collapse className={'newGroupCollapseSection'} in={newGroup} timeout='auto' unmountOnExit>
+            <Collapse
+              className={'newGroupCollapseSection'}
+              in={newGroup}
+              timeout='auto'
+              unmountOnExit
+            >
               <form onSubmit={handleSubmitNew}>
-                <Grid className={'row'} container direction={'row'} justify={'space-evenly'} wrap={'nowrap'}>
-                  <GroupInfoForm data={formData} formInputHandler={handleFormInput} editing={false} />
+                <Grid
+                  className={'row'}
+                  container
+                  direction={'row'}
+                  justify={'space-evenly'}
+                  wrap={'nowrap'}
+                >
+                  <GroupInfoForm
+                    data={formData}
+                    formInputHandler={handleFormInput}
+                    editing={false}
+                  />
 
-                  <Divider variant={'fullWidth'} flexItem={true} orientation={'vertical'} />
+                  <Divider
+                    variant={'fullWidth'}
+                    flexItem={true}
+                    orientation={'vertical'}
+                  />
 
-                  <GroupAccessForm data={formData} formInputHandler={handleFormInput} />
+                  <GroupAccessForm
+                    data={formData}
+                    formInputHandler={handleFormInput}
+                  />
                 </Grid>
 
                 <Divider variant={'fullWidth'} />
 
                 {/* Form actions */}
-                <Grid className={'row'} container item direction={'row'} justify={'space-between'}>
+                <Grid
+                  className={'row'}
+                  container
+                  item
+                  direction={'row'}
+                  justify={'space-between'}
+                >
                   <Button
                     variant={'contained'}
                     type={'button'}
                     size={'medium'}
                     color={'secondary'}
                     title={'cancel'}
-                    onClick={e => handleClick(e)}
+                    onClick={(e) => handleClick(e)}
                   >
                     Cancel
                   </Button>
@@ -209,11 +260,15 @@ const AccessGroups = ({
               </form>
             </Collapse>
 
-            <Grid className={'column contentDataWrapper'} container direction={'column'}>
+            <Grid
+              className={'column contentDataWrapper'}
+              container
+              direction={'column'}
+            >
               {loading ? (
                 <Spinner />
               ) : (
-                accessGroups.map(accessGroup => (
+                accessGroups.map((accessGroup) => (
                   <AccessGroupCard
                     key={accessGroup._id}
                     checkboxHandler={handleGroupSelected}

@@ -65,7 +65,7 @@ const PrivacyAndNotificationsForm = ({ user, updateAccountSettings }) => {
             </Typography>
           </Box>
 
-          <FormControl className={'form-field-group'}>
+          <FormControl>
             <FormControlLabel
               control={
                 <Checkbox
@@ -88,7 +88,7 @@ const PrivacyAndNotificationsForm = ({ user, updateAccountSettings }) => {
             ) : null}
           </FormControl>
 
-          <FormControl className={'form-field-group'}>
+          <FormControl>
             <FormControlLabel
               control={
                 <Checkbox
@@ -131,9 +131,7 @@ const PrivacyAndNotificationsForm = ({ user, updateAccountSettings }) => {
                 />
               }
               label={
-                <Typography variant={'body2'}>
-                  Send offers by sms. (Requires mobile number)
-                </Typography>
+                <Typography variant={'body2'}>Send offers by sms.</Typography>
               }
             />
             {props.errors.smsNotifications && props.touched.smsNotifications ? (

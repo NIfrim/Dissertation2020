@@ -8,8 +8,21 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { deleteUser } from '../../../actions/user';
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.secondary.main
+  },
+  buttonRoot: {
+    color: theme.palette.secondary.contrastText
+  }
+}));
 
 const DeleteUserDialog = ({ dialogOpen, setDialogOpen, deleteUser }) => {
+  const classes = useStyles();
+
   const handleClick = (event) => {
     const element = event.currentTarget;
 
@@ -30,8 +43,12 @@ const DeleteUserDialog = ({ dialogOpen, setDialogOpen, deleteUser }) => {
 
   return (
     <div>
-      <Dialog open={dialogOpen}>
-        <DialogTitle id='alert-dialog-title'>{'Are you sure?'}</DialogTitle>
+      <Dialog open={dialogOpen} classes={{ paper: classes.root }}>
+        <DialogTitle id='alert-dialog-title'>
+          <Typography variant={'h5'} color={'textSecondary'}>
+            Are you sure?
+          </Typography>
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
             Deleting the account is irreversible, if unsure use the Deactivate
@@ -39,14 +56,19 @@ const DeleteUserDialog = ({ dialogOpen, setDialogOpen, deleteUser }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button id={'cancel'} onClick={handleClick} variant={'outlined'}>
+          <Button
+            id={'cancel'}
+            onClick={handleClick}
+            variant={'outlined'}
+            classes={{ root: classes.buttonRoot }}
+          >
             Cancel
           </Button>
           <Button
             id={'confirmDelete'}
             onClick={handleClick}
             variant={'outlined'}
-            autoFocus
+            classes={{ root: classes.buttonRoot }}
           >
             Delete
           </Button>

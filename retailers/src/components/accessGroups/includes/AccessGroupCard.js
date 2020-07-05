@@ -3,22 +3,39 @@ import PropTypes from 'prop-types';
 
 // Redux
 import { connect } from 'react-redux';
-import { updateAccessGroup, removeAccessGroups } from '../../../actions/accessGroups';
+import {
+  updateAccessGroup,
+  removeAccessGroups
+} from '../../../actions/accessGroups';
 
 // Components
-import { Typography, Grid, makeStyles, Button, Checkbox, Paper, Divider, Collapse } from '@material-ui/core';
+import {
+  Typography,
+  Grid,
+  makeStyles,
+  Button,
+  Checkbox,
+  Paper,
+  Divider,
+  Collapse
+} from '@material-ui/core';
 import GroupInfoForm from './GroupInfoForm';
 import GroupAccessForm from './GroupAccessForm';
 import { getScopes } from '../../../utils';
 import clsx from 'clsx';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   disabled: {
     backgroundColor: theme.palette.common.grey
   }
 }));
 
-const AccessGroup = ({ checkboxHandler, updateAccessGroup, removeAccessGroups, groupData }) => {
+const AccessGroup = ({
+  checkboxHandler,
+  updateAccessGroup,
+  removeAccessGroups,
+  groupData
+}) => {
   const classes = useStyles();
 
   const [editing, setEditing] = useState(false);
@@ -30,7 +47,7 @@ const AccessGroup = ({ checkboxHandler, updateAccessGroup, removeAccessGroups, g
     setEditing(!editing);
   };
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const { title } = e.currentTarget;
     const { _id, ...rest } = cardData;
 
@@ -58,7 +75,7 @@ const AccessGroup = ({ checkboxHandler, updateAccessGroup, removeAccessGroups, g
     }
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const { _id, ...rest } = cardData;
 
@@ -74,14 +91,16 @@ const AccessGroup = ({ checkboxHandler, updateAccessGroup, removeAccessGroups, g
 
     if (target.type === 'checkbox') {
       // If checkbox selected and value not added, then add value to scopes array
-      checked && !scopes.find(elem => elem === value) && setCardData({ ...cardData, scopes: [...scopes, value] });
+      checked &&
+        !scopes.find((elem) => elem === value) &&
+        setCardData({ ...cardData, scopes: [...scopes, value] });
 
       // If checkbos is unselected then remove value from scopes array
       !checked &&
-        scopes.find(elem => elem === value) &&
+        scopes.find((elem) => elem === value) &&
         setCardData({
           ...cardData,
-          scopes: scopes.filter(elem => elem !== value)
+          scopes: scopes.filter((elem) => elem !== value)
         });
     } else if (name === 'role') {
       setCardData({ ...cardData, [name]: value, scopes: getScopes(value) });
@@ -108,14 +127,29 @@ const AccessGroup = ({ checkboxHandler, updateAccessGroup, removeAccessGroups, g
           alignItems={'center'}
           justify={'space-evenly'}
         >
-          <Checkbox name={'accountCheckbox'} value={_id} onClick={e => checkboxHandler(e)} />
+          <Checkbox
+            name={'accountCheckbox'}
+            value={_id}
+            onClick={(e) => checkboxHandler(e)}
+          />
           <Grid item container direction={'row'} justify={'space-between'}>
             <Typography variant={'body2'}>id: {_id}</Typography>
             <Typography variant={'body2'}>group: {groupName}</Typography>
             <Typography variant={'body2'}>role: {role}</Typography>
           </Grid>
-          <Grid item container direction={'row'} wrap={'nowrap'} justify={'flex-end'}>
-            <Button variant={'outlined'} size={'small'} color={'secondary'} onClick={collapseHandler}>
+          <Grid
+            item
+            container
+            direction={'row'}
+            wrap={'nowrap'}
+            justify={'flex-end'}
+          >
+            <Button
+              variant={'outlined'}
+              size={'small'}
+              color={'secondary'}
+              onClick={collapseHandler}
+            >
               Edit
             </Button>
             <Button
@@ -127,7 +161,13 @@ const AccessGroup = ({ checkboxHandler, updateAccessGroup, removeAccessGroups, g
             >
               {disabled ? 'Enable' : 'Disable'}
             </Button>
-            <Button variant={'outlined'} size={'small'} color={'secondary'} onClick={handleClick} title={'remove'}>
+            <Button
+              variant={'outlined'}
+              size={'small'}
+              color={'secondary'}
+              onClick={handleClick}
+              title={'remove'}
+            >
               Remove
             </Button>
           </Grid>
@@ -136,17 +176,45 @@ const AccessGroup = ({ checkboxHandler, updateAccessGroup, removeAccessGroups, g
         <Divider />
 
         {/* Forms */}
-        <Collapse className={'cardCollapseSection'} in={editing} timeout='auto' unmountOnExit>
-          <Grid className={'row'} container direction={'row'} wrap={'nowrap'} justify={'space-evenly'}>
-            <GroupInfoForm data={cardData} formInputHandler={handleFormInput} editing={true} />
+        <Collapse
+          className={'cardCollapseSection'}
+          in={editing}
+          timeout='auto'
+          unmountOnExit
+        >
+          <Grid
+            className={'row'}
+            container
+            direction={'row'}
+            wrap={'nowrap'}
+            justify={'space-evenly'}
+          >
+            <GroupInfoForm
+              data={cardData}
+              formInputHandler={handleFormInput}
+              editing={true}
+            />
 
-            <Divider variant={'fullWidth'} flexItem={true} orientation={'vertical'} />
+            <Divider
+              variant={'fullWidth'}
+              flexItem={true}
+              orientation={'vertical'}
+            />
 
-            <GroupAccessForm data={cardData} formInputHandler={handleFormInput} />
+            <GroupAccessForm
+              data={cardData}
+              formInputHandler={handleFormInput}
+            />
           </Grid>
 
           {/* Form actions */}
-          <Grid className={'row'} container item direction={'row'} justify={'space-between'}>
+          <Grid
+            className={'row'}
+            container
+            item
+            direction={'row'}
+            justify={'space-between'}
+          >
             <Button
               variant={'contained'}
               type={'button'}

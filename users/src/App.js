@@ -29,12 +29,20 @@ import { connect } from 'react-redux';
 import { loadUser } from './actions/auth';
 import { loadPromotions } from './actions/promotions';
 import { setDeviceInfo } from './actions/user';
+import { makeStyles } from '@material-ui/core/styles';
 
 const parser = new UAParser();
+
+const useStyles = makeStyles((theme) => ({
+  main: {
+    height: '100%'
+  }
+}));
 
 const App = ({ auth, account, loadUser, loadPromotions, setDeviceInfo }) => {
   const { isAuthenticated } = auth;
   const theme = useTheme(account.theme, account.fontScale);
+  const classes = useStyles();
 
   // Load the user whenever they load the app and they are logged in
   useEffect(() => {
@@ -50,7 +58,7 @@ const App = ({ auth, account, loadUser, loadPromotions, setDeviceInfo }) => {
     };
 
     setDeviceInfo(deviceInfo);
-  }, [setDeviceInfo]);
+  }, [setDeviceInfo, isAuthenticated]);
 
   // Load all the promotions from the stores
   // Load the user whenever they load the app and they are logged in
@@ -64,7 +72,7 @@ const App = ({ auth, account, loadUser, loadPromotions, setDeviceInfo }) => {
         <CssBaseline />
         {!isAuthenticated && <Redirect to={'/portal'} />}
         {isAuthenticated && <CustomAppBar />}
-        <Box component={'main'}>
+        <Box component={'main'} className={classes.main}>
           <Switch>
             <PrivateRoute exact path={'/account'} component={Account} />
             <PrivateRoute exact path={'/'} component={Home} />

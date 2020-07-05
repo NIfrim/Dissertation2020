@@ -1,5 +1,5 @@
-import React, { Fragment, useState } from 'react'
-import PropTypes from 'prop-types'
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 // Components
 import {
@@ -11,18 +11,18 @@ import {
   MenuItem,
   Box,
   IconButton
-} from '@material-ui/core'
-import { TextInput, Label, Selector } from '../../includes'
+} from '@material-ui/core';
+import { TextInput, Label, Selector } from '../../includes';
 
-const useStyles = makeStyles(theme => {})
+const useStyles = makeStyles((theme) => {});
 
 const GroupInfoForm = ({ data, formInputHandler, editing }) => {
-  const classes = useStyles()
+  const classes = useStyles();
 
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const { groupName, username, type, password } = data
-  const types = ['STORE_ACCOUNT', 'COMPANY_ACCOUNT']
+  const { groupName, username, type, password } = data;
+  const types = ['STORE_ACCOUNT', 'COMPANY_ACCOUNT'];
 
   return (
     <Grid className={'column'} container item>
@@ -81,7 +81,7 @@ const GroupInfoForm = ({ data, formInputHandler, editing }) => {
           <MenuItem value=''>
             <em>Select Type</em>
           </MenuItem>
-          {types.map(type => (
+          {types.map((type) => (
             <MenuItem key={type} value={type}>
               {type.replace('_', ' ')}
             </MenuItem>
@@ -126,7 +126,9 @@ const GroupInfoForm = ({ data, formInputHandler, editing }) => {
         variant={'outlined'}
         margin={'dense'}
       >
-        <Label htmlFor={'password'}>{editing ? 'New Password' : 'Password'}</Label>
+        <Label htmlFor={'password'}>
+          {editing ? 'New Password' : 'Password'}
+        </Label>
         <TextInput
           id={'password'}
           type={passwordVisible ? 'text' : 'password'}
@@ -154,13 +156,13 @@ const GroupInfoForm = ({ data, formInputHandler, editing }) => {
         )}
       </FormControl>
     </Grid>
-  )
-}
+  );
+};
 
 GroupInfoForm.propTypes = {
   data: PropTypes.object.isRequired,
   formInputHandler: PropTypes.func.isRequired,
   editing: PropTypes.bool.isRequired
-}
+};
 
-export default GroupInfoForm
+export default GroupInfoForm;
