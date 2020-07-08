@@ -41,7 +41,37 @@ const theme = createMuiTheme({
     borderRadiusSmall: 5
   },
   typography: {
-    fontSize: 13
+    fontSize: 13,
+    h1: {
+      fontFamily: "'Montserrat', sans-serif"
+    },
+    h2: {
+      fontFamily: "'Montserrat', sans-serif"
+    },
+    h3: {
+      fontFamily: "'Montserrat', sans-serif"
+    },
+    h4: {
+      fontFamily: "'Montserrat', sans-serif"
+    },
+    h5: {
+      fontFamily: "'Montserrat', sans-serif"
+    },
+    h6: {
+      fontFamily: "'Montserrat', sans-serif"
+    },
+    subtitle1: {
+      fontFamily: "'Josefin Sans', sans-serif"
+    },
+    subtitle2: {
+      fontFamily: "'Josefin Sans', sans-serif"
+    },
+    body1: {
+      fontFamily: "'Josefin Sans', sans-serif"
+    },
+    body2: {
+      fontFamily: "'Josefin Sans', sans-serif"
+    }
   },
   overrides: {
     MuiDrawer: {

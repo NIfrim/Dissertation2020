@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 // Redux
 import { connect } from 'react-redux';
@@ -34,7 +34,7 @@ const Account = ({ app }) => {
   return loading ? (
     <Spinner />
   ) : (
-    <Box className={classes.main}>
+    <Fragment>
       <Box
         className={classes.headerRow}
         display={'flex'}
@@ -126,7 +126,7 @@ const Account = ({ app }) => {
           </Box>
         </Container>
       </Box>
-    </Box>
+    </Fragment>
   );
 };
 

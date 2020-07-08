@@ -34,15 +34,17 @@ import { makeStyles } from '@material-ui/core/styles';
 const parser = new UAParser();
 
 const useStyles = makeStyles((theme) => ({
-  main: {
-    height: '100%'
-  }
+  main: ({ mainBackground }) => ({
+    backgroundColor: mainBackground,
+    height: '100%',
+    overflow: 'auto'
+  })
 }));
 
 const App = ({ auth, account, loadUser, loadPromotions, setDeviceInfo }) => {
   const { isAuthenticated } = auth;
   const theme = useTheme(account.theme, account.fontScale);
-  const classes = useStyles();
+  const classes = useStyles(theme.palette.common);
 
   // Load the user whenever they load the app and they are logged in
   useEffect(() => {
