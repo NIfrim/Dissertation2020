@@ -18,3 +18,10 @@ Running this repo requires nodejs to be installed (repo tested with nodejs 12.18
 - Run ```npm install``` within each sub-directories (api, retailers, and users)
 - Run ```npm run dev``` from three different terminals within each of the sub-directories (api, retailers, and users). Might be asked to confirm use of different port, this is ok
 - Each terminal should display the relevant port on which they run from localhost, use these to connect to each service
+
+## UI retailers & users
+Retailers use the interface to manage the promotions and related products:
+![Retailers UI sample](retailers.png)
+
+Users (Clients) use the interface to manage their accounts and use promotions:
+![Users UI sample](users.png)
