@@ -19,6 +19,8 @@ Running this repo requires nodejs to be installed (repo tested with nodejs 12.18
 - Run ```npm run dev``` from three different terminals within each of the sub-directories (api, retailers, and users). Might be asked to confirm use of different port, this is ok
 - Each terminal should display the relevant port on which they run from localhost, use these to connect to each service
 
+*THE CLOUD NEO4J DATABASE HAS BEEN TERMINATED, ONE NEEDS TO BE CREATED LOCALLY WITH A DEMO ACCOUNT ADDED IF YOU WANT TO TEST THE APPLICATION, MODIFY APOLLO.JS TO REFLECT CHANGES.
+
 ## UI retailers & users
 Retailers use the interface to manage the promotions and related products:
 ![Retailers UI sample](retailers.png)
